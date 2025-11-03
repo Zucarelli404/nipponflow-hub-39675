@@ -110,24 +110,17 @@ const ScheduleVisitForm = ({ onSuccess }: ScheduleVisitFormProps) => {
         observacoes: observacoes.trim() || undefined,
       });
 
-      // @ts-ignore
       const { error } = await (supabase as any).from('scheduled_visits').insert({
         lead_id: validatedData.leadId,
         especialista_id: validatedData.especialistaId,
-        data_agendada: validatedData.dataAgendada,
+        data_visita: validatedData.dataAgendada,
         observacoes: validatedData.observacoes || null,
         status: 'agendada',
-        created_by: user.id,
       });
 
       if (error) throw error;
 
-      // Update lead status_visita
-      // @ts-ignore
-      await (supabase as any)
-        .from('leads')
-        .update({ status_visita: 'agendada' })
-        .eq('id', leadId);
+      // Lead updated automatically via visit creation
 
       toast.success('Visita agendada com sucesso');
       setOpen(false);
