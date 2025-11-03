@@ -28,6 +28,8 @@ interface UserProfile {
   ativo: boolean;
   created_at: string;
   role?: 'admin' | 'diretor' | 'gerente' | null;
+  diretor_id?: string | null;
+  diretor_nome?: string | null;
 }
 
 const UsersManagement = () => {
@@ -41,10 +43,10 @@ const UsersManagement = () => {
 
   const fetchUsers = async () => {
     try {
-      // Fetch profiles
+      // Fetch profiles with director info
       const { data: profiles, error: profilesError } = await supabase
         .from('profiles')
-        .select('*')
+        .select('*, diretor:diretor_id(nome)')
         .order('created_at', { ascending: false });
 
       if (profilesError) throw profilesError;
@@ -57,11 +59,12 @@ const UsersManagement = () => {
       if (rolesError) throw rolesError;
 
       // Merge profiles with roles
-      const usersWithRoles = profiles.map((profile) => {
+      const usersWithRoles = profiles.map((profile: any) => {
         const userRole = roles.find((r) => r.user_id === profile.id);
         return {
           ...profile,
           role: userRole?.role || null,
+          diretor_nome: profile.diretor?.nome || null,
         };
       });
 
@@ -107,6 +110,32 @@ const UsersManagement = () => {
       toast({
         title: 'Erro ao atualizar perfil',
         description: 'Não foi possível atualizar o perfil. Tente novamente.',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleDirectorChange = async (userId: string, diretorId: string | null) => {
+    try {
+      const { error } = await (supabase as any)
+        .from('profiles')
+        .update({ diretor_id: diretorId === 'none' ? null : diretorId })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      // Refresh users list
+      await fetchUsers();
+
+      toast({
+        title: 'Equipe atualizada',
+        description: 'O usuário foi atribuído ao diretor com sucesso.',
+      });
+    } catch (error) {
+      console.error('Error updating director:', error);
+      toast({
+        title: 'Erro ao atualizar equipe',
+        description: 'Não foi possível atribuir o usuário. Tente novamente.',
         variant: 'destructive',
       });
     }
@@ -163,6 +192,7 @@ const UsersManagement = () => {
               <TableHead>Nome</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Perfil</TableHead>
+              <TableHead>Diretor</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Ações</TableHead>
             </TableRow>
@@ -170,51 +200,79 @@ const UsersManagement = () => {
           <TableBody>
             {users.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8">
+                <TableCell colSpan={6} className="text-center py-8">
                   <p className="text-sm text-muted-foreground">Nenhum usuário cadastrado</p>
                 </TableCell>
               </TableRow>
             ) : (
-              users.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell className="font-medium">{user.nome}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>
-                    <Badge className={getRoleBadgeColor(user.role)}>
-                      {getRoleLabel(user.role)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {user.ativo ? (
-                      <Badge variant="outline" className="bg-success/10 text-success">
-                        Ativo
+              users.map((user) => {
+                const directors = users.filter((u) => u.role === 'diretor');
+                
+                return (
+                  <TableRow key={user.id}>
+                    <TableCell className="font-medium">{user.nome}</TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>
+                      <Badge className={getRoleBadgeColor(user.role)}>
+                        {getRoleLabel(user.role)}
                       </Badge>
-                    ) : (
-                      <Badge variant="outline" className="bg-muted text-muted-foreground">
-                        Inativo
-                      </Badge>
-                    )}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Select
-                      value={user.role || 'none'}
-                      onValueChange={(value) =>
-                        value !== 'none' && handleRoleChange(user.id, value)
-                      }
-                    >
-                      <SelectTrigger className="w-[140px]">
-                        <UserCog className="mr-2 h-4 w-4" />
-                        <SelectValue placeholder="Atribuir" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="admin">Administrador</SelectItem>
-                        <SelectItem value="diretor">Diretor</SelectItem>
-                        <SelectItem value="gerente">Gerente</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </TableCell>
-                </TableRow>
-              ))
+                    </TableCell>
+                    <TableCell>
+                      {user.role !== 'admin' && user.role !== 'diretor' ? (
+                        <Select
+                          value={user.diretor_id || 'none'}
+                          onValueChange={(value) => handleDirectorChange(user.id, value)}
+                        >
+                          <SelectTrigger className="w-[160px]">
+                            <SelectValue placeholder="Sem diretor" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none">Sem diretor</SelectItem>
+                            {directors.map((dir) => (
+                              <SelectItem key={dir.id} value={dir.id}>
+                                {dir.nome}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      ) : (
+                        <span className="text-sm text-muted-foreground">
+                          {user.diretor_nome || '-'}
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {user.ativo ? (
+                        <Badge variant="outline" className="bg-success/10 text-success">
+                          Ativo
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="bg-muted text-muted-foreground">
+                          Inativo
+                        </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Select
+                        value={user.role || 'none'}
+                        onValueChange={(value) =>
+                          value !== 'none' && handleRoleChange(user.id, value)
+                        }
+                      >
+                        <SelectTrigger className="w-[140px]">
+                          <UserCog className="mr-2 h-4 w-4" />
+                          <SelectValue placeholder="Atribuir" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="admin">Administrador</SelectItem>
+                          <SelectItem value="diretor">Diretor</SelectItem>
+                          <SelectItem value="gerente">Gerente</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>
