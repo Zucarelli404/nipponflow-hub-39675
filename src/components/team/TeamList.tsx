@@ -16,6 +16,8 @@ interface TeamMember {
   data_admissao?: string;
   ativo: boolean;
   created_at: string;
+  diretor_id?: string | null;
+  diretor?: { nome: string } | null;
   user_roles: Array<{ role: string }>;
 }
 
@@ -29,9 +31,9 @@ const TeamList = () => {
 
   const fetchTeamMembers = async () => {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('profiles')
-        .select('*, user_roles(role)')
+        .select('*, user_roles(role), diretor:diretor_id(nome)')
         .eq('ativo', true)
         .order('nome');
 
@@ -107,6 +109,13 @@ const TeamList = () => {
               <div className="flex gap-2 flex-wrap justify-center">
                 {getRoleBadge(member.user_roles)}
               </div>
+
+              {member.diretor && (
+                <div className="w-full py-2 px-3 bg-muted rounded-md">
+                  <p className="text-xs text-muted-foreground">Equipe de</p>
+                  <p className="text-sm font-medium">{member.diretor.nome}</p>
+                </div>
+              )}
 
               <div className="w-full space-y-2 text-sm">
                 <div className="flex items-center gap-2 text-muted-foreground">

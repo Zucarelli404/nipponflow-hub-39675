@@ -1,28 +1,23 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useToast } from '@/hooks/use-toast';
-import { Users, ChevronRight, User } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { ChevronDown, ChevronRight, Users } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
-interface UserProfile {
+interface TeamMemberHierarchy {
   id: string;
   nome: string;
   email: string;
   role?: 'admin' | 'diretor' | 'gerente' | null;
-  diretor_id?: string | null;
-}
-
-interface TeamNode {
-  user: UserProfile;
-  children: TeamNode[];
+  team_members: TeamMemberHierarchy[];
 }
 
 const TeamHierarchy = () => {
-  const [hierarchy, setHierarchy] = useState<TeamNode[]>([]);
+  const [hierarchy, setHierarchy] = useState<TeamMemberHierarchy[]>([]);
   const [loading, setLoading] = useState(true);
-  const { toast } = useToast();
+  const [expandedDiretors, setExpandedDiretors] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     fetchHierarchy();
@@ -30,75 +25,95 @@ const TeamHierarchy = () => {
 
   const fetchHierarchy = async () => {
     try {
-      const { data: profiles, error: profilesError } = await supabase
+      // Buscar todos os perfis
+      const { data: profiles, error: profilesError } = await (supabase as any)
         .from('profiles')
         .select('*')
-        .order('nome');
+        .eq('ativo', true);
 
       if (profilesError) throw profilesError;
 
+      // Buscar roles
       const { data: roles, error: rolesError } = await supabase
         .from('user_roles')
         .select('user_id, role');
 
       if (rolesError) throw rolesError;
 
-      const usersWithRoles: UserProfile[] = profiles.map((profile: any) => {
-        const userRole = roles.find((r) => r.user_id === profile.id);
-        return {
-          ...profile,
-          role: userRole?.role || null,
-        };
-      });
+      // Montar estrutura hierárquica
+      const profilesWithRoles = profiles.map((p: any) => ({
+        ...p,
+        role: roles.find((r) => r.user_id === p.id)?.role || null,
+      }));
 
-      const tree = buildTree(usersWithRoles);
-      setHierarchy(tree);
+      // Separar diretores
+      const diretores = profilesWithRoles.filter((p: any) => p.role === 'diretor');
+
+      // Construir árvore
+      const tree = diretores.map((diretor: any) => ({
+        id: diretor.id,
+        nome: diretor.nome,
+        email: diretor.email,
+        role: diretor.role,
+        team_members: profilesWithRoles
+          .filter((p: any) => p.diretor_id === diretor.id)
+          .map((member: any) => ({
+            id: member.id,
+            nome: member.nome,
+            email: member.email,
+            role: member.role,
+            team_members: [],
+          })),
+      }));
+
+      // Adicionar admins e usuários sem diretor
+      const admins = profilesWithRoles.filter((p: any) => p.role === 'admin');
+      const orphans = profilesWithRoles.filter(
+        (p: any) => !p.diretor_id && p.role !== 'admin' && p.role !== 'diretor'
+      );
+
+      const additionalNodes = [...admins, ...orphans].map((p: any) => ({
+        id: p.id,
+        nome: p.nome,
+        email: p.email,
+        role: p.role,
+        team_members: [],
+      }));
+
+      setHierarchy([...tree, ...additionalNodes]);
     } catch (error) {
       console.error('Error fetching hierarchy:', error);
-      toast({
-        title: 'Erro ao carregar hierarquia',
-        description: 'Não foi possível carregar a estrutura da equipe.',
-        variant: 'destructive',
-      });
     } finally {
       setLoading(false);
     }
   };
 
-  const buildTree = (users: UserProfile[]): TeamNode[] => {
-    const map = new Map<string, TeamNode>();
-    const roots: TeamNode[] = [];
-
-    users.forEach((user) => {
-      map.set(user.id, { user, children: [] });
-    });
-
-    users.forEach((user) => {
-      const node = map.get(user.id)!;
-      if (user.diretor_id && map.has(user.diretor_id)) {
-        map.get(user.diretor_id)!.children.push(node);
-      } else if (user.role === 'admin' || user.role === 'diretor' || !user.diretor_id) {
-        roots.push(node);
+  const toggleDiretor = (id: string) => {
+    setExpandedDiretors((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
       }
+      return newSet;
     });
-
-    return roots;
   };
 
-  const getRoleLabel = (role: string | null | undefined) => {
+  const getRoleLabel = (role: string | null) => {
     switch (role) {
       case 'admin':
-        return 'Admin';
+        return 'Administrador';
       case 'diretor':
         return 'Diretor';
       case 'gerente':
         return 'Gerente';
       default:
-        return 'Usuário';
+        return 'Membro';
     }
   };
 
-  const getRoleBadgeColor = (role: string | null | undefined) => {
+  const getRoleBadgeColor = (role: string | null) => {
     switch (role) {
       case 'admin':
         return 'bg-destructive text-destructive-foreground';
@@ -111,101 +126,100 @@ const TeamHierarchy = () => {
     }
   };
 
-  const TreeNode = ({ node, level = 0 }: { node: TeamNode; level?: number }) => {
-    const [expanded, setExpanded] = useState(true);
-    const hasChildren = node.children.length > 0;
-
-    return (
-      <div className="space-y-2">
-        <div
-          className={cn(
-            'flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors',
-            level > 0 && 'ml-8'
-          )}
-        >
-          {hasChildren ? (
-            <button
-              onClick={() => setExpanded(!expanded)}
-              className="p-1 hover:bg-muted rounded transition-transform"
-            >
-              <ChevronRight
-                className={cn(
-                  'h-4 w-4 transition-transform',
-                  expanded && 'rotate-90'
-                )}
-              />
-            </button>
-          ) : (
-            <div className="w-6" />
-          )}
-
-          {hasChildren ? (
-            <Users className="h-5 w-5 text-primary" />
-          ) : (
-            <User className="h-5 w-5 text-muted-foreground" />
-          )}
-
-          <div className="flex-1 flex items-center gap-3">
-            <div className="flex-1">
-              <p className="font-medium">{node.user.nome}</p>
-              <p className="text-sm text-muted-foreground">{node.user.email}</p>
-            </div>
-            <Badge className={getRoleBadgeColor(node.user.role)}>
-              {getRoleLabel(node.user.role)}
-            </Badge>
-            {hasChildren && (
-              <Badge variant="outline" className="ml-2">
-                {node.children.length} {node.children.length === 1 ? 'membro' : 'membros'}
-              </Badge>
-            )}
-          </div>
-        </div>
-
-        {expanded && hasChildren && (
-          <div className="space-y-1">
-            {node.children.map((child) => (
-              <TreeNode key={child.user.id} node={child} level={level + 1} />
-            ))}
-          </div>
-        )}
-      </div>
-    );
+  const getInitials = (name: string) => {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   };
 
   if (loading) {
-    return (
-      <Card className="p-6">
-        <p className="text-sm text-muted-foreground text-center">
-          Carregando hierarquia...
-        </p>
-      </Card>
-    );
-  }
-
-  if (hierarchy.length === 0) {
-    return (
-      <Card className="p-6">
-        <p className="text-sm text-muted-foreground text-center">
-          Nenhuma estrutura hierárquica encontrada
-        </p>
-      </Card>
-    );
+    return <div className="text-sm text-muted-foreground">Carregando hierarquia...</div>;
   }
 
   return (
-    <Card className="p-6">
-      <div className="space-y-4">
-        <div className="flex items-center gap-2 mb-4">
-          <Users className="h-5 w-5 text-primary" />
-          <h3 className="text-lg font-semibold">Estrutura da Equipe</h3>
-        </div>
-
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Users className="h-5 w-5" />
+          Hierarquia da Equipe
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
         <div className="space-y-2">
           {hierarchy.map((node) => (
-            <TreeNode key={node.user.id} node={node} />
+            <div key={node.id}>
+              {node.team_members.length > 0 ? (
+                <Collapsible
+                  open={expandedDiretors.has(node.id)}
+                  onOpenChange={() => toggleDiretor(node.id)}
+                >
+                  <CollapsibleTrigger className="w-full">
+                    <div className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors">
+                      {expandedDiretors.has(node.id) ? (
+                        <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                      )}
+                      <Avatar className="h-10 w-10">
+                        <AvatarFallback>{getInitials(node.nome)}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 text-left">
+                        <div className="font-medium">{node.nome}</div>
+                        <div className="text-xs text-muted-foreground">{node.email}</div>
+                      </div>
+                      <Badge className={getRoleBadgeColor(node.role)}>
+                        {getRoleLabel(node.role)}
+                      </Badge>
+                      <Badge variant="outline" className="ml-2">
+                        {node.team_members.length} {node.team_members.length === 1 ? 'membro' : 'membros'}
+                      </Badge>
+                    </div>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <div className="ml-8 mt-2 space-y-2 border-l-2 border-muted pl-4">
+                      {node.team_members.map((member) => (
+                        <div
+                          key={member.id}
+                          className="flex items-center gap-3 p-3 rounded-lg border bg-card"
+                        >
+                          <Avatar className="h-8 w-8">
+                            <AvatarFallback className="text-xs">
+                              {getInitials(member.nome)}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div className="flex-1">
+                            <div className="font-medium text-sm">{member.nome}</div>
+                            <div className="text-xs text-muted-foreground">{member.email}</div>
+                          </div>
+                          <Badge className={getRoleBadgeColor(member.role)}>
+                            {getRoleLabel(member.role)}
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+              ) : (
+                <div className="flex items-center gap-3 p-3 rounded-lg border">
+                  <Avatar className="h-10 w-10">
+                    <AvatarFallback>{getInitials(node.nome)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="font-medium">{node.nome}</div>
+                    <div className="text-xs text-muted-foreground">{node.email}</div>
+                  </div>
+                  <Badge className={getRoleBadgeColor(node.role)}>
+                    {getRoleLabel(node.role)}
+                  </Badge>
+                </div>
+              )}
+            </div>
           ))}
         </div>
-      </div>
+      </CardContent>
     </Card>
   );
 };
