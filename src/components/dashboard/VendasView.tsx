@@ -46,6 +46,11 @@ const VendasView = () => {
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
+  const handleSuccess = () => {
+    setDialogOpen(false);
+    fetchSales();
+  };
+
   useEffect(() => {
     fetchSales();
   }, []);
@@ -125,11 +130,8 @@ const VendasView = () => {
               <DialogTitle>Cadastrar Nova Venda</DialogTitle>
             </DialogHeader>
             <VisitReportForm
-              leadId={selectedLeadId || ''}
-              onSuccess={() => {
-                setDialogOpen(false);
-                fetchSales();
-              }}
+              leadId={selectedLeadId || undefined}
+              onSuccess={handleSuccess}
             />
           </DialogContent>
         </Dialog>

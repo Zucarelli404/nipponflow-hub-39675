@@ -113,7 +113,15 @@ const VisitReportForm = ({ leadId, onSuccess }: VisitReportFormProps) => {
 
   const updateItem = (index: number, field: keyof VendaItem, value: string | number) => {
     const newItens = [...itens];
-    newItens[index] = { ...newItens[index], [field]: value };
+    if (field === 'quantidade') {
+      const numValue = typeof value === 'string' ? parseInt(value) : value;
+      newItens[index] = { ...newItens[index], [field]: isNaN(numValue) ? 0 : numValue };
+    } else if (field === 'valor_unitario') {
+      const numValue = typeof value === 'string' ? parseFloat(value) : value;
+      newItens[index] = { ...newItens[index], [field]: isNaN(numValue) ? 0 : numValue };
+    } else {
+      newItens[index] = { ...newItens[index], [field]: value as string };
+    }
     setItens(newItens);
   };
 
@@ -140,19 +148,18 @@ const VisitReportForm = ({ leadId, onSuccess }: VisitReportFormProps) => {
         itens: vendaRealizada ? itens : undefined,
       });
 
-      // @ts-ignore - Tabelas serão criadas pela migration
+      // @ts-ignore - visit_reports types will be generated
       const { data: report, error: reportError } = await (supabase as any)
         .from('visit_reports')
         .insert({
           lead_id: selectedLeadId,
           especialista_id: validatedData.especialistaId,
           data_visita: validatedData.dataVisita,
-          quilometragem_percorrida: validatedData.quilometragem || null,
+          km_percorrido: validatedData.quilometragem || null,
           venda_realizada: validatedData.vendaRealizada,
           forma_pagamento: validatedData.formaPagamento || null,
           valor_total: vendaRealizada ? valorTotal : 0,
           observacoes: validatedData.observacoes || null,
-          created_by: user.id,
         })
         .select()
         .single();
@@ -165,10 +172,9 @@ const VisitReportForm = ({ leadId, onSuccess }: VisitReportFormProps) => {
           descricao: item.descricao,
           quantidade: item.quantidade,
           valor_unitario: item.valor_unitario,
-          valor_total: item.quantidade * item.valor_unitario,
         }));
 
-        // @ts-ignore - Tabelas serão criadas pela migration
+        // @ts-ignore - visit_items types will be generated
         const { error: itemsError } = await (supabase as any)
           .from('visit_items')
           .insert(itemsToInsert);
@@ -176,17 +182,20 @@ const VisitReportForm = ({ leadId, onSuccess }: VisitReportFormProps) => {
         if (itemsError) throw itemsError;
       }
 
-      const newStatus = vendaRealizada ? 'visitado_vendido' : 'visitado_sem_venda';
-      // @ts-ignore - Campo será adicionado pela migration
-      await (supabase as any)
-        .from('leads')
-        .update({ status_visita: newStatus })
-        .eq('id', selectedLeadId);
-
       toast({
         title: 'Relatório criado',
         description: 'O relatório de visita foi registrado com sucesso.',
       });
+
+      // Reset form
+      setSelectedLeadId('');
+      setEspecialistaId('');
+      setDataVisita('');
+      setQuilometragem('');
+      setVendaRealizada(false);
+      setFormaPagamento('');
+      setObservacoes('');
+      setItens([]);
 
       onSuccess?.();
     } catch (error) {
@@ -333,8 +342,8 @@ const VisitReportForm = ({ leadId, onSuccess }: VisitReportFormProps) => {
                         type="number"
                         placeholder="Quantidade"
                         min="1"
-                        value={item.quantidade}
-                        onChange={(e) => updateItem(index, 'quantidade', parseInt(e.target.value))}
+                        value={item.quantidade || ''}
+                        onChange={(e) => updateItem(index, 'quantidade', e.target.value)}
                         required
                       />
                       <Input
@@ -342,8 +351,8 @@ const VisitReportForm = ({ leadId, onSuccess }: VisitReportFormProps) => {
                         step="0.01"
                         placeholder="Valor unitário"
                         min="0"
-                        value={item.valor_unitario}
-                        onChange={(e) => updateItem(index, 'valor_unitario', parseFloat(e.target.value))}
+                        value={item.valor_unitario || ''}
+                        onChange={(e) => updateItem(index, 'valor_unitario', e.target.value)}
                         required
                       />
                     </div>
