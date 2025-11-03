@@ -30,9 +30,16 @@ const visitReportSchema = z.object({
   message: 'Para vendas realizadas, forma de pagamento e itens são obrigatórios',
 });
 
+// Interfaces
+interface Lead {
+  id: string;
+  nome: string;
+  telefone: string;
+}
+
 interface VisitReportFormProps {
-  leadId: string;
-  onSuccess: () => void;
+  leadId?: string;
+  onSuccess?: () => void;
 }
 
 interface VendaItem {
@@ -47,6 +54,8 @@ interface Especialista {
 }
 
 const VisitReportForm = ({ leadId, onSuccess }: VisitReportFormProps) => {
+  const [leads, setLeads] = useState<Lead[]>([]);
+  const [selectedLeadId, setSelectedLeadId] = useState(leadId || '');
   const [especialistas, setEspecialistas] = useState<Especialista[]>([]);
   const [especialistaId, setEspecialistaId] = useState('');
   const [dataVisita, setDataVisita] = useState('');
@@ -61,7 +70,24 @@ const VisitReportForm = ({ leadId, onSuccess }: VisitReportFormProps) => {
 
   useEffect(() => {
     fetchEspecialistas();
-  }, []);
+    if (!leadId) {
+      fetchLeads();
+    }
+  }, [leadId]);
+
+  const fetchLeads = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('leads')
+        .select('id, nome, telefone')
+        .order('nome');
+
+      if (error) throw error;
+      setLeads(data || []);
+    } catch (error) {
+      console.error('Error fetching leads:', error);
+    }
+  };
 
   const fetchEspecialistas = async () => {
     try {
@@ -118,7 +144,7 @@ const VisitReportForm = ({ leadId, onSuccess }: VisitReportFormProps) => {
       const { data: report, error: reportError } = await (supabase as any)
         .from('visit_reports')
         .insert({
-          lead_id: leadId,
+          lead_id: selectedLeadId,
           especialista_id: validatedData.especialistaId,
           data_visita: validatedData.dataVisita,
           quilometragem_percorrida: validatedData.quilometragem || null,
@@ -155,14 +181,14 @@ const VisitReportForm = ({ leadId, onSuccess }: VisitReportFormProps) => {
       await (supabase as any)
         .from('leads')
         .update({ status_visita: newStatus })
-        .eq('id', leadId);
+        .eq('id', selectedLeadId);
 
       toast({
         title: 'Relatório criado',
         description: 'O relatório de visita foi registrado com sucesso.',
       });
 
-      onSuccess();
+      onSuccess?.();
     } catch (error) {
       if (error instanceof z.ZodError) {
         toast({
@@ -189,6 +215,24 @@ const VisitReportForm = ({ leadId, onSuccess }: VisitReportFormProps) => {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {!leadId && (
+            <div className="space-y-2">
+              <Label htmlFor="lead">Cliente</Label>
+              <Select value={selectedLeadId} onValueChange={setSelectedLeadId} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione o cliente" />
+                </SelectTrigger>
+                <SelectContent>
+                  {leads.map((lead) => (
+                    <SelectItem key={lead.id} value={lead.id}>
+                      {lead.nome} - {lead.telefone}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+          
           <div className="space-y-2">
             <Label htmlFor="especialista">Especialista</Label>
             <Select value={especialistaId} onValueChange={setEspecialistaId} required>

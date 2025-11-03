@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 
 interface ScheduledVisit {
   id: string;
-  data_agendada: string;
+  data_visita: string;
   status: 'agendada' | 'realizada' | 'cancelada';
   observacoes: string | null;
   lead: {
@@ -40,7 +40,7 @@ const ScheduledVisitsList = () => {
           lead:leads(nome, telefone),
           especialista:profiles!scheduled_visits_especialista_id_fkey(nome)
         `)
-        .order('data_agendada', { ascending: true });
+        .order('data_visita', { ascending: true });
 
       if (error) throw error;
       setVisits(data || []);
@@ -149,15 +149,15 @@ const ScheduledVisitsList = () => {
             <TableCell>
               <div>
                 <div className="font-medium">
-                  {new Date(visit.data_agendada).toLocaleDateString('pt-BR')}
+                  {new Date(visit.data_visita).toLocaleDateString('pt-BR')}
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  {new Date(visit.data_agendada).toLocaleTimeString('pt-BR', {
+                  {new Date(visit.data_visita).toLocaleTimeString('pt-BR', {
                     hour: '2-digit',
                     minute: '2-digit',
                   })}{' '}
                   -{' '}
-                  {formatDistanceToNow(new Date(visit.data_agendada), {
+                  {formatDistanceToNow(new Date(visit.data_visita), {
                     addSuffix: true,
                     locale: ptBR,
                   })}

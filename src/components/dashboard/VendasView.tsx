@@ -1,11 +1,20 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ShoppingCart, DollarSign, TrendingUp, Package } from 'lucide-react';
+import { ShoppingCart, DollarSign, TrendingUp, Package, Plus } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import VisitReportForm from '@/components/visits/VisitReportForm';
 
 interface Sale {
   id: string;
@@ -34,6 +43,8 @@ const VendasView = () => {
     itemsSold: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     fetchSales();
@@ -97,9 +108,31 @@ const VendasView = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-foreground">Vendas</h2>
-        <p className="text-muted-foreground">Acompanhe vendas e faturamento</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-foreground">Vendas</h2>
+          <p className="text-muted-foreground">Acompanhe vendas e faturamento</p>
+        </div>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="shadow-glow">
+              <Plus className="h-4 w-4 mr-2" />
+              Cadastrar Venda
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Cadastrar Nova Venda</DialogTitle>
+            </DialogHeader>
+            <VisitReportForm
+              leadId={selectedLeadId || ''}
+              onSuccess={() => {
+                setDialogOpen(false);
+                fetchSales();
+              }}
+            />
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="grid gap-4 md:grid-cols-4">

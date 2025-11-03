@@ -76,7 +76,6 @@ const AutoSuggestVisits = () => {
         .from('leads')
         .select('*')
         .neq('status', 'perdido')
-        .or('status_visita.is.null,status_visita.eq.pendente')
         .order('created_at', { ascending: true });
 
       if (error) throw error;
@@ -128,19 +127,11 @@ const AutoSuggestVisits = () => {
       const { error } = await (supabase as any).from('scheduled_visits').insert({
         lead_id: selectedLead.id,
         especialista_id: especialistaId,
-        data_agendada: dataAgendada,
+        data_visita: dataAgendada,
         status: 'agendada',
-        created_by: user.id,
       });
 
       if (error) throw error;
-
-      // Update lead status_visita
-      // @ts-ignore
-      await (supabase as any)
-        .from('leads')
-        .update({ status_visita: 'agendada' })
-        .eq('id', selectedLead.id);
 
       toast.success('Visita agendada automaticamente');
       setSelectedLead(null);
