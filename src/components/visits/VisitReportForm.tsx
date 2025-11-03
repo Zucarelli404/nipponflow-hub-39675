@@ -10,6 +10,25 @@ import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Trash2 } from 'lucide-react';
+import { z } from 'zod';
+
+const visitItemSchema = z.object({
+  descricao: z.string().trim().min(1, 'Descrição é obrigatória').max(200),
+  quantidade: z.number().int().positive('Quantidade deve ser positiva'),
+  valor_unitario: z.number().nonnegative('Valor deve ser positivo'),
+});
+
+const visitReportSchema = z.object({
+  especialistaId: z.string().uuid('ID de especialista inválido'),
+  dataVisita: z.string().min(1, 'Data da visita é obrigatória'),
+  quilometragem: z.number().nonnegative('Quilometragem deve ser positiva').optional(),
+  vendaRealizada: z.boolean(),
+  formaPagamento: z.string().optional(),
+  observacoes: z.string().max(1000, 'Observações devem ter no máximo 1000 caracteres').optional(),
+  itens: z.array(visitItemSchema).optional(),
+}).refine((data) => !data.vendaRealizada || (data.formaPagamento && data.itens && data.itens.length > 0), {
+  message: 'Para vendas realizadas, forma de pagamento e itens são obrigatórios',
+});
 
 interface VisitReportFormProps {
   leadId: string;
@@ -84,18 +103,29 @@ const VisitReportForm = ({ leadId, onSuccess }: VisitReportFormProps) => {
     try {
       const valorTotal = calculateTotal();
 
+      // Validate input
+      const validatedData = visitReportSchema.parse({
+        especialistaId,
+        dataVisita,
+        quilometragem: quilometragem ? parseFloat(quilometragem) : undefined,
+        vendaRealizada,
+        formaPagamento: vendaRealizada ? formaPagamento : undefined,
+        observacoes: observacoes || undefined,
+        itens: vendaRealizada ? itens : undefined,
+      });
+
       // @ts-ignore - Tabelas serão criadas pela migration
       const { data: report, error: reportError } = await (supabase as any)
         .from('visit_reports')
         .insert({
           lead_id: leadId,
-          especialista_id: especialistaId,
-          data_visita: dataVisita,
-          quilometragem_percorrida: quilometragem ? parseFloat(quilometragem) : null,
-          venda_realizada: vendaRealizada,
-          forma_pagamento: vendaRealizada ? formaPagamento : null,
+          especialista_id: validatedData.especialistaId,
+          data_visita: validatedData.dataVisita,
+          quilometragem_percorrida: validatedData.quilometragem || null,
+          venda_realizada: validatedData.vendaRealizada,
+          forma_pagamento: validatedData.formaPagamento || null,
           valor_total: vendaRealizada ? valorTotal : 0,
-          observacoes: observacoes || null,
+          observacoes: validatedData.observacoes || null,
           created_by: user.id,
         })
         .select()
@@ -134,12 +164,19 @@ const VisitReportForm = ({ leadId, onSuccess }: VisitReportFormProps) => {
 
       onSuccess();
     } catch (error) {
-      console.error('Error creating visit report:', error);
-      toast({
-        title: 'Erro ao criar relatório',
-        description: 'Não foi possível criar o relatório. Tente novamente.',
-        variant: 'destructive',
-      });
+      if (error instanceof z.ZodError) {
+        toast({
+          title: 'Dados inválidos',
+          description: error.errors[0].message,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Erro ao criar relatório',
+          description: 'Não foi possível criar o relatório. Tente novamente.',
+          variant: 'destructive',
+        });
+      }
     } finally {
       setLoading(false);
     }

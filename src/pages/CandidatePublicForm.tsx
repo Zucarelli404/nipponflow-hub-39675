@@ -9,6 +9,24 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { z } from 'zod';
+
+const candidateSchema = z.object({
+  nome: z.string().trim().min(1, 'Nome é obrigatório').max(100, 'Nome deve ter no máximo 100 caracteres'),
+  idade: z.number().int().min(16, 'Idade mínima é 16 anos').max(100, 'Idade inválida'),
+  email: z.string().trim().email('Email inválido').max(255, 'Email deve ter no máximo 255 caracteres'),
+  telefone: z.string().trim().regex(/^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/, 'Formato de telefone inválido'),
+  cargo_desejado: z.string().trim().min(1, 'Cargo desejado é obrigatório').max(100),
+  nota_gostar_pessoas: z.number().int().min(0).max(10),
+  nota_proatividade: z.number().int().min(0).max(10),
+  nota_ambicao: z.number().int().min(0).max(10),
+  nota_ensinavel: z.number().int().min(0).max(10),
+  maior_renda_mensal: z.number().nonnegative('Valor deve ser positivo'),
+  renda_desejada: z.number().nonnegative('Valor deve ser positivo'),
+  tempo_regiao: z.string().max(100).optional(),
+  tempo_desempregado: z.string().max(100).optional(),
+  como_soube: z.string().trim().max(500),
+});
 
 const CandidatePublicForm = () => {
   const { linkId } = useParams();
@@ -65,6 +83,24 @@ const CandidatePublicForm = () => {
     setLoading(true);
 
     try {
+      // Validate input data
+      const validatedData = candidateSchema.parse({
+        nome: formData.nome,
+        idade: parseInt(formData.idade),
+        email: formData.email,
+        telefone: formData.telefone,
+        cargo_desejado: formData.cargo_desejado,
+        nota_gostar_pessoas: parseInt(formData.nota_gostar_pessoas),
+        nota_proatividade: parseInt(formData.nota_proatividade),
+        nota_ambicao: parseInt(formData.nota_ambicao),
+        nota_ensinavel: parseInt(formData.nota_ensinavel),
+        maior_renda_mensal: parseFloat(formData.maior_renda_mensal),
+        renda_desejada: parseFloat(formData.renda_desejada),
+        tempo_regiao: formData.tempo_regiao || undefined,
+        tempo_desempregado: formData.tempo_desempregado || undefined,
+        como_soube: formData.como_soube,
+      });
+
       // Verificar se o link da organização é válido
       const { data: org, error: orgError } = await (supabase as any)
         .from('organizations')
@@ -84,27 +120,27 @@ const CandidatePublicForm = () => {
       // Inserir candidato
       const { error } = await (supabase as any).from('candidates').insert({
         organization_id: org.id,
-        nome: formData.nome.trim(),
-        idade: parseInt(formData.idade),
-        email: formData.email.trim(),
-        telefone: formData.telefone.trim(),
+        nome: validatedData.nome,
+        idade: validatedData.idade,
+        email: validatedData.email,
+        telefone: validatedData.telefone,
         casado: formData.casado === 'sim',
         tem_filhos: formData.tem_filhos === 'sim',
         nasceu_regiao: formData.nasceu_regiao === 'sim',
-        tempo_regiao: formData.tempo_regiao,
+        tempo_regiao: validatedData.tempo_regiao || null,
         familia_regiao: formData.familia_regiao === 'sim',
         experiencia_comercial: formData.experiencia_comercial === 'sim',
-        nota_gostar_pessoas: parseInt(formData.nota_gostar_pessoas),
-        nota_proatividade: parseInt(formData.nota_proatividade),
-        nota_ambicao: parseInt(formData.nota_ambicao),
-        maior_renda_mensal: parseFloat(formData.maior_renda_mensal),
-        renda_desejada: parseFloat(formData.renda_desejada),
-        nota_ensinavel: parseInt(formData.nota_ensinavel),
+        nota_gostar_pessoas: validatedData.nota_gostar_pessoas,
+        nota_proatividade: validatedData.nota_proatividade,
+        nota_ambicao: validatedData.nota_ambicao,
+        maior_renda_mensal: validatedData.maior_renda_mensal,
+        renda_desejada: validatedData.renda_desejada,
+        nota_ensinavel: validatedData.nota_ensinavel,
         situacao_emprego: formData.situacao_emprego,
         disponibilidade_horario: formData.disponibilidade,
-        tempo_desempregado: formData.tempo_desempregado,
-        como_soube: formData.como_soube,
-        cargo_desejado: formData.cargo_desejado.trim(),
+        tempo_desempregado: validatedData.tempo_desempregado || null,
+        como_soube: validatedData.como_soube,
+        cargo_desejado: validatedData.cargo_desejado,
         status: 'pendente',
       });
 
@@ -118,12 +154,19 @@ const CandidatePublicForm = () => {
       // Limpar formulário
       navigate('/candidatura-enviada');
     } catch (error) {
-      console.error('Error submitting candidate:', error);
-      toast({
-        title: 'Erro ao enviar candidatura',
-        description: 'Não foi possível enviar sua candidatura. Tente novamente.',
-        variant: 'destructive',
-      });
+      if (error instanceof z.ZodError) {
+        toast({
+          title: 'Dados inválidos',
+          description: error.errors[0].message,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Erro ao enviar candidatura',
+          description: 'Não foi possível enviar sua candidatura. Tente novamente.',
+          variant: 'destructive',
+        });
+      }
     } finally {
       setLoading(false);
     }

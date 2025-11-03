@@ -8,6 +8,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Plus } from 'lucide-react';
+import { z } from 'zod';
+
+const leadSchema = z.object({
+  nome: z.string().trim().min(1, 'Nome é obrigatório').max(100, 'Nome deve ter no máximo 100 caracteres'),
+  telefone: z.string().trim().regex(/^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/, 'Formato de telefone inválido (ex: (00) 00000-0000)'),
+  origem: z.enum(['whatsapp', 'facebook', 'instagram', 'google', 'indicacao', 'site', 'outros']),
+});
 
 interface LeadFormProps {
   onSuccess?: () => void;
@@ -28,10 +35,17 @@ const LeadForm = ({ onSuccess }: LeadFormProps) => {
 
     setLoading(true);
     try {
-      const { error } = await supabase.from('leads').insert({
-        nome: nome.trim(),
-        telefone: telefone.trim(),
+      // Validate input
+      const validatedData = leadSchema.parse({
+        nome,
+        telefone,
         origem,
+      });
+
+      const { error } = await supabase.from('leads').insert({
+        nome: validatedData.nome,
+        telefone: validatedData.telefone,
+        origem: validatedData.origem,
         status: 'novo',
         responsavel_id: user.id,
       });
@@ -49,12 +63,19 @@ const LeadForm = ({ onSuccess }: LeadFormProps) => {
       setOpen(false);
       onSuccess?.();
     } catch (error) {
-      console.error('Error creating lead:', error);
-      toast({
-        title: 'Erro ao cadastrar lead',
-        description: 'Não foi possível adicionar o lead. Tente novamente.',
-        variant: 'destructive',
-      });
+      if (error instanceof z.ZodError) {
+        toast({
+          title: 'Dados inválidos',
+          description: error.errors[0].message,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Erro ao cadastrar lead',
+          description: 'Não foi possível adicionar o lead. Tente novamente.',
+          variant: 'destructive',
+        });
+      }
     } finally {
       setLoading(false);
     }

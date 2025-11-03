@@ -22,6 +22,16 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Calendar, Plus } from 'lucide-react';
+import { z } from 'zod';
+
+const visitScheduleSchema = z.object({
+  leadId: z.string().uuid('ID de lead inválido'),
+  especialistaId: z.string().uuid('ID de especialista inválido'),
+  dataAgendada: z.string().refine((date) => new Date(date) > new Date(), {
+    message: 'Data deve ser futura',
+  }),
+  observacoes: z.string().max(1000, 'Observações devem ter no máximo 1000 caracteres').optional(),
+});
 
 interface ScheduleVisitFormProps {
   onSuccess?: () => void;
@@ -92,12 +102,20 @@ const ScheduleVisitForm = ({ onSuccess }: ScheduleVisitFormProps) => {
 
     setLoading(true);
     try {
+      // Validate input
+      const validatedData = visitScheduleSchema.parse({
+        leadId,
+        especialistaId,
+        dataAgendada,
+        observacoes: observacoes.trim() || undefined,
+      });
+
       // @ts-ignore
       const { error } = await (supabase as any).from('scheduled_visits').insert({
-        lead_id: leadId,
-        especialista_id: especialistaId,
-        data_agendada: dataAgendada,
-        observacoes: observacoes.trim() || null,
+        lead_id: validatedData.leadId,
+        especialista_id: validatedData.especialistaId,
+        data_agendada: validatedData.dataAgendada,
+        observacoes: validatedData.observacoes || null,
         status: 'agendada',
         created_by: user.id,
       });
@@ -119,8 +137,11 @@ const ScheduleVisitForm = ({ onSuccess }: ScheduleVisitFormProps) => {
       setObservacoes('');
       onSuccess?.();
     } catch (error) {
-      console.error('Error scheduling visit:', error);
-      toast.error('Erro ao agendar visita');
+      if (error instanceof z.ZodError) {
+        toast.error(error.errors[0].message);
+      } else {
+        toast.error('Erro ao agendar visita');
+      }
     } finally {
       setLoading(false);
     }
