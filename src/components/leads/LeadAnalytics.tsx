@@ -39,7 +39,7 @@ const LeadAnalytics = () => {
       // Buscar todos os leads
       const { data: leads, error: leadsError } = await supabase
         .from('leads')
-        .select('id, origem, status, status_visita');
+        .select('id, origem, status');
 
       if (leadsError) throw leadsError;
 

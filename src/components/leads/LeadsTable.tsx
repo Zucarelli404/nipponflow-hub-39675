@@ -27,10 +27,9 @@ interface Lead {
   origem: string;
   created_at: string;
   updated_at: string;
-  status_visita?: string;
   responsavel?: {
     nome: string;
-  };
+  } | null;
   visit_count?: number;
   sale_count?: number;
   total_value?: number;
@@ -62,12 +61,10 @@ const LeadsTable = () => {
           nome,
           telefone,
           status,
-          status_visita,
           origem,
           created_at,
           updated_at,
-          responsavel_id,
-          responsavel:profiles!leads_responsavel_id_fkey(nome)
+          responsavel_id
         `)
         .order('created_at', { ascending: false });
 
@@ -78,14 +75,25 @@ const LeadsTable = () => {
         .from('visit_reports')
         .select('lead_id, venda_realizada, valor_total');
 
+      // Buscar informações dos responsáveis
+      const responsavelIds = [...new Set(leadsData?.map((l: any) => l.responsavel_id).filter(Boolean))];
+      const { data: profilesData } = responsavelIds.length > 0
+        ? await supabase
+            .from('profiles')
+            .select('id, nome')
+            .in('id', responsavelIds)
+        : { data: [] };
+
       // Consolidar dados
       const leadsWithMetrics = leadsData?.map((lead: any) => {
         const leadVisits = visitsData?.filter((v: any) => v.lead_id === lead.id) || [];
         const leadSales = leadVisits.filter((v: any) => v.venda_realizada);
         const totalValue = leadSales.reduce((sum: number, v: any) => sum + Number(v.valor_total || 0), 0);
+        const responsavel = profilesData?.find((p: any) => p.id === lead.responsavel_id);
 
         return {
           ...lead,
+          responsavel: responsavel ? { nome: responsavel.nome } : null,
           visit_count: leadVisits.length,
           sale_count: leadSales.length,
           total_value: totalValue,
@@ -130,7 +138,6 @@ const LeadsTable = () => {
       'Nome',
       'Telefone',
       'Status',
-      'Status Visita',
       'Origem',
       'Responsável',
       'Visitas',
@@ -143,7 +150,6 @@ const LeadsTable = () => {
       lead.nome,
       lead.telefone,
       getStatusLabel(lead.status),
-      lead.status_visita || 'pendente',
       lead.origem,
       lead.responsavel?.nome || '-',
       lead.visit_count || 0,
@@ -255,7 +261,6 @@ const LeadsTable = () => {
               <TableHead>Nome</TableHead>
               <TableHead>Telefone</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead>Status Visita</TableHead>
               <TableHead>Origem</TableHead>
               <TableHead className="text-center">Visitas</TableHead>
               <TableHead className="text-center">Vendas</TableHead>
@@ -267,13 +272,13 @@ const LeadsTable = () => {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={10} className="text-center py-8">
+                <TableCell colSpan={9} className="text-center py-8">
                   <p className="text-sm text-muted-foreground">Carregando leads...</p>
                 </TableCell>
               </TableRow>
             ) : filteredLeads.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={10} className="text-center py-8">
+                <TableCell colSpan={9} className="text-center py-8">
                   <p className="text-sm text-muted-foreground">
                     {searchTerm || statusFilter !== 'all'
                       ? 'Nenhum lead encontrado com os filtros aplicados'
@@ -289,11 +294,6 @@ const LeadsTable = () => {
                   <TableCell>
                     <Badge className={cn('text-xs', getStatusColor(lead.status))}>
                       {getStatusLabel(lead.status)}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="secondary" className="text-xs">
-                      {lead.status_visita || 'pendente'}
                     </Badge>
                   </TableCell>
                   <TableCell>
