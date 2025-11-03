@@ -1,9 +1,10 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Settings, Webhook, MessageSquare, Users, Link2 } from 'lucide-react';
+import { Settings, Webhook, MessageSquare, Users, Link2, Network } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import UsersManagement from '@/components/settings/UsersManagement';
 import OrganizationLinks from '@/components/settings/OrganizationLinks';
+import TeamHierarchy from '@/components/settings/TeamHierarchy';
 
 const SettingsView = () => {
   return (
@@ -21,8 +22,12 @@ const SettingsView = () => {
         </AlertDescription>
       </Alert>
 
-      <Tabs defaultValue="users" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+      <Tabs defaultValue="hierarchy" className="w-full">
+        <TabsList className="grid w-full grid-cols-5">
+          <TabsTrigger value="hierarchy">
+            <Network className="mr-2 h-4 w-4" />
+            Hierarquia
+          </TabsTrigger>
           <TabsTrigger value="users">
             <Users className="mr-2 h-4 w-4" />
             Usuários
@@ -40,6 +45,10 @@ const SettingsView = () => {
             Mensagens
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="hierarchy" className="mt-6">
+          <TeamHierarchy />
+        </TabsContent>
 
         <TabsContent value="users" className="mt-6">
           <Card>
