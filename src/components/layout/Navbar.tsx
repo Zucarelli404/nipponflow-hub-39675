@@ -51,12 +51,13 @@ const Navbar = () => {
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary rounded-lg">
+            <div className="p-2 bg-primary rounded-lg shadow-glow">
               <MessageSquare className="w-5 h-5 text-primary-foreground" />
             </div>
             <div>
-              <h1 className="text-xl font-bold text-foreground">Genius</h1>
-              <p className="text-xs text-muted-foreground">Nipponflex</p>
+              <h1 className="text-xl font-bold text-foreground">
+                Graduação<span className="text-primary"> Infinita</span> ∞
+              </h1>
             </div>
           </div>
 
