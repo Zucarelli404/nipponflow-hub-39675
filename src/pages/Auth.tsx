@@ -116,130 +116,166 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-background to-accent/10 p-4">
-      <Card className="w-full max-w-md shadow-xl">
-        <CardHeader className="space-y-2 text-center">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <div className="p-2 bg-primary rounded-lg">
-              <MessageSquare className="w-6 h-6 text-primary-foreground" />
-            </div>
-            <h1 className="text-2xl font-bold text-foreground">Genius</h1>
-          </div>
-          <CardTitle className="text-xl">Plataforma de Atendimento</CardTitle>
-          <CardDescription>
-            Centralize conversas do WhatsApp e gerencie leads
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="login" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="signup">Criar Conta</TabsTrigger>
-            </TabsList>
+    <div className="min-h-screen flex items-center justify-center overflow-hidden relative" style={{ backgroundColor: '#0a0a0a', fontFamily: 'Poppins, sans-serif' }}>
+      {/* Animated background shapes */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute w-20 h-20 border-2 rounded-lg animate-float" style={{ 
+          borderColor: 'rgba(255, 165, 0, 0.25)', 
+          top: '10%', 
+          left: '15%',
+          animationDelay: '0s'
+        }} />
+        <div className="absolute w-30 h-30 border-2 rounded-lg animate-float" style={{ 
+          borderColor: 'rgba(255, 165, 0, 0.25)', 
+          top: '60%', 
+          left: '70%',
+          animationDelay: '2s'
+        }} />
+        <div className="absolute w-25 h-25 border-2 rounded-lg animate-float" style={{ 
+          borderColor: 'rgba(255, 165, 0, 0.25)', 
+          top: '30%', 
+          left: '85%',
+          transform: 'rotate(45deg)',
+          animationDelay: '4s'
+        }} />
+        <div className="absolute w-36 h-36 border-2 rounded-lg animate-float" style={{ 
+          borderColor: 'rgba(255, 165, 0, 0.1)', 
+          top: '75%', 
+          left: '20%',
+          animationDelay: '6s'
+        }} />
+      </div>
 
-            <TabsContent value="login">
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="login-email">Email</Label>
-                  <Input
-                    id="login-email"
-                    type="email"
-                    placeholder="seu@email.com"
-                    value={loginEmail}
-                    onChange={(e) => setLoginEmail(e.target.value)}
-                    disabled={isLoading}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="login-password">Senha</Label>
-                  <Input
-                    id="login-password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={loginPassword}
-                    onChange={(e) => setLoginPassword(e.target.value)}
-                    disabled={isLoading}
-                    required
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Entrando...
-                    </>
-                  ) : (
-                    'Entrar'
-                  )}
-                </Button>
-              </form>
-            </TabsContent>
+      {/* Login Box */}
+      <div className="relative z-10 w-full max-w-[380px] mx-4 p-12 rounded-3xl text-center animate-fade-in" style={{
+        background: 'rgba(17, 17, 17, 0.95)',
+        boxShadow: '0 0 40px rgba(255, 165, 0, 0.25)'
+      }}>
+        {/* Logo */}
+        <div className="flex items-center justify-center gap-2 mb-4">
+          <h1 className="text-3xl font-bold text-white" style={{ letterSpacing: '0.5px' }}>
+            Graduação<span style={{ color: '#ffa500' }}>Infinita</span>
+          </h1>
+          <div className="text-2xl transform rotate-12" style={{ color: '#ffa500' }}>∞</div>
+        </div>
+        
+        <h2 className="text-base font-normal mb-8" style={{ color: '#aaa' }}>
+          Acesse sua jornada de aprendizado
+        </h2>
 
-            <TabsContent value="signup">
-              <form onSubmit={handleSignup} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="signup-nome">Nome Completo</Label>
-                  <Input
-                    id="signup-nome"
-                    type="text"
-                    placeholder="Seu nome"
-                    value={signupNome}
-                    onChange={(e) => setSignupNome(e.target.value)}
-                    disabled={isLoading}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    placeholder="seu@email.com"
-                    value={signupEmail}
-                    onChange={(e) => setSignupEmail(e.target.value)}
-                    disabled={isLoading}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Senha</Label>
-                  <Input
-                    id="signup-password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={signupPassword}
-                    onChange={(e) => setSignupPassword(e.target.value)}
-                    disabled={isLoading}
-                    required
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Mínimo de 6 caracteres
-                  </p>
-                </div>
-                <Button
-                  type="submit"
-                  className="w-full"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Criando conta...
-                    </>
-                  ) : (
-                    'Criar Conta'
-                  )}
-                </Button>
-              </form>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+        <Tabs defaultValue="login" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-6" style={{ background: '#1a1a1a' }}>
+            <TabsTrigger value="login" className="data-[state=active]:bg-[#ffa500] data-[state=active]:text-black">
+              Login
+            </TabsTrigger>
+            <TabsTrigger value="signup" className="data-[state=active]:bg-[#ffa500] data-[state=active]:text-black">
+              Criar Conta
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="login">
+            <form onSubmit={handleLogin} className="flex flex-col gap-5">
+              <Input
+                type="email"
+                placeholder="Email"
+                value={loginEmail}
+                onChange={(e) => setLoginEmail(e.target.value)}
+                disabled={isLoading}
+                required
+                className="px-5 py-4 rounded-xl text-base border-none focus-visible:ring-2"
+                style={{ background: '#1a1a1a', color: '#fff' }}
+              />
+              <Input
+                type="password"
+                placeholder="Senha"
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                disabled={isLoading}
+                required
+                className="px-5 py-4 rounded-xl text-base border-none focus-visible:ring-2"
+                style={{ background: '#1a1a1a', color: '#fff' }}
+              />
+              <Button
+                type="submit"
+                className="py-4 rounded-xl font-semibold text-base transition-all hover:shadow-lg"
+                disabled={isLoading}
+                style={{ 
+                  background: '#ffa500', 
+                  color: '#000',
+                  border: 'none'
+                }}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Entrando...
+                  </>
+                ) : (
+                  'Entrar'
+                )}
+              </Button>
+            </form>
+          </TabsContent>
+
+          <TabsContent value="signup">
+            <form onSubmit={handleSignup} className="flex flex-col gap-5">
+              <Input
+                type="text"
+                placeholder="Nome Completo"
+                value={signupNome}
+                onChange={(e) => setSignupNome(e.target.value)}
+                disabled={isLoading}
+                required
+                className="px-5 py-4 rounded-xl text-base border-none focus-visible:ring-2"
+                style={{ background: '#1a1a1a', color: '#fff' }}
+              />
+              <Input
+                type="email"
+                placeholder="Email"
+                value={signupEmail}
+                onChange={(e) => setSignupEmail(e.target.value)}
+                disabled={isLoading}
+                required
+                className="px-5 py-4 rounded-xl text-base border-none focus-visible:ring-2"
+                style={{ background: '#1a1a1a', color: '#fff' }}
+              />
+              <Input
+                type="password"
+                placeholder="Senha (mínimo 6 caracteres)"
+                value={signupPassword}
+                onChange={(e) => setSignupPassword(e.target.value)}
+                disabled={isLoading}
+                required
+                className="px-5 py-4 rounded-xl text-base border-none focus-visible:ring-2"
+                style={{ background: '#1a1a1a', color: '#fff' }}
+              />
+              <Button
+                type="submit"
+                className="py-4 rounded-xl font-semibold text-base transition-all hover:shadow-lg"
+                disabled={isLoading}
+                style={{ 
+                  background: '#ffa500', 
+                  color: '#000',
+                  border: 'none'
+                }}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Criando conta...
+                  </>
+                ) : (
+                  'Criar Conta'
+                )}
+              </Button>
+            </form>
+          </TabsContent>
+        </Tabs>
+
+        <div className="mt-6 text-sm" style={{ color: '#888' }}>
+          Dúvidas? <a href="#" className="transition-all" style={{ color: '#ffa500', textDecoration: 'none' }}>Entre em contato</a>
+        </div>
+      </div>
     </div>
   );
 };
