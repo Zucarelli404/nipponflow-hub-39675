@@ -3,9 +3,14 @@ import { UserProfile } from "@/components/gamification/UserProfile";
 import { Leaderboard } from "@/components/gamification/Leaderboard";
 import { GoalsManager } from "@/components/gamification/GoalsManager";
 import { RewardsStore } from "@/components/gamification/RewardsStore";
-import { Trophy, Target, Gift, Users } from "lucide-react";
+import { GamificationAdmin } from "@/components/gamification/admin/GamificationAdmin";
+import { useAuth } from "@/contexts/AuthContext";
+import { Trophy, Target, Gift, Users, Settings } from "lucide-react";
 
 const GamificacaoView = () => {
+  const { userRole } = useAuth();
+  const isAdmin = userRole === "admin" || userRole === "gerente";
+
   return (
     <div className="space-y-6">
       <div>
@@ -16,7 +21,7 @@ const GamificacaoView = () => {
       </div>
 
       <Tabs defaultValue="profile" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className={isAdmin ? "grid w-full grid-cols-5" : "grid w-full grid-cols-4"}>
           <TabsTrigger value="profile">
             <Trophy className="mr-2 h-4 w-4" />
             Perfil
@@ -33,6 +38,12 @@ const GamificacaoView = () => {
             <Gift className="mr-2 h-4 w-4" />
             Prêmios
           </TabsTrigger>
+          {isAdmin && (
+            <TabsTrigger value="admin">
+              <Settings className="mr-2 h-4 w-4" />
+              Administração
+            </TabsTrigger>
+          )}
         </TabsList>
 
         <TabsContent value="profile" className="space-y-6">
@@ -50,6 +61,12 @@ const GamificacaoView = () => {
         <TabsContent value="rewards" className="space-y-6">
           <RewardsStore />
         </TabsContent>
+
+        {isAdmin && (
+          <TabsContent value="admin" className="space-y-6">
+            <GamificationAdmin />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );
