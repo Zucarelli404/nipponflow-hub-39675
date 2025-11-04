@@ -20,6 +20,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { UserCog, ShieldAlert } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { handleError } from '@/lib/errorHandler';
 
 interface UserProfile {
   id: string;
@@ -70,7 +71,7 @@ const UsersManagement = () => {
 
       setUsers(usersWithRoles);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      handleError(error, 'Erro ao carregar usuários');
       toast({
         title: 'Erro ao carregar usuários',
         description: 'Não foi possível carregar a lista de usuários.',
@@ -106,7 +107,7 @@ const UsersManagement = () => {
         description: 'O perfil do usuário foi atualizado com sucesso.',
       });
     } catch (error) {
-      console.error('Error updating role:', error);
+      handleError(error, 'Erro ao atualizar perfil');
       toast({
         title: 'Erro ao atualizar perfil',
         description: 'Não foi possível atualizar o perfil. Tente novamente.',
@@ -132,7 +133,7 @@ const UsersManagement = () => {
         description: 'O usuário foi atribuído ao diretor com sucesso.',
       });
     } catch (error) {
-      console.error('Error updating director:', error);
+      handleError(error, 'Erro ao atualizar equipe');
       toast({
         title: 'Erro ao atualizar equipe',
         description: 'Não foi possível atribuir o usuário. Tente novamente.',

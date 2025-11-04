@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { z } from 'zod';
+import { handleError } from '@/lib/errorHandler';
 
 const whatsappConnectionSchema = z.object({
   instance_name: z.string()
@@ -78,7 +79,7 @@ const WhatsAppConnection = () => {
         });
       }
     } catch (error) {
-      console.error('Error fetching connection:', error);
+      handleError(error, 'Erro ao carregar conexão do WhatsApp');
       toast({
         title: 'Erro',
         description: 'Erro ao carregar conexão do WhatsApp',
@@ -140,7 +141,7 @@ const WhatsAppConnection = () => {
         });
         return;
       }
-      console.error('Error saving connection:', error);
+      handleError(error, 'Erro ao salvar conexão');
       toast({
         title: 'Erro',
         description: 'Erro ao salvar conexão',
@@ -176,7 +177,7 @@ const WhatsAppConnection = () => {
         api_key: '',
       });
     } catch (error) {
-      console.error('Error disconnecting:', error);
+      handleError(error, 'Erro ao remover conexão');
       toast({
         title: 'Erro',
         description: 'Erro ao remover conexão',

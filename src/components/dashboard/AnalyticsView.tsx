@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3, TrendingUp, Users as UsersIcon, CheckCircle2, XCircle } from 'lucide-react';
+import { handleError } from '@/lib/errorHandler';
 
 const AnalyticsView = () => {
   const [stats, setStats] = useState({
@@ -59,7 +60,7 @@ const AnalyticsView = () => {
         conversion_rate: conversionRate,
       });
     } catch (error) {
-      console.error('Error fetching stats:', error);
+      handleError(error, 'Erro ao carregar estatísticas');
     } finally {
       setLoading(false);
     }

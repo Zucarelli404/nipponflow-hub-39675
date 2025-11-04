@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Search, Phone, MessageSquare } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { handleError } from '@/lib/errorHandler';
 
 interface Lead {
   id: string;
@@ -47,7 +48,7 @@ const ConversationList = ({ selectedLeadId, onSelectLead }: ConversationListProp
       if (error) throw error;
       setLeads(data || []);
     } catch (error) {
-      console.error('Erro ao carregar conversas:', error);
+      handleError(error, 'Erro ao carregar conversas');
     } finally {
       setLoading(false);
     }

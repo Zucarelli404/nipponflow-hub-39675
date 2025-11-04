@@ -8,6 +8,17 @@ import { Send, Loader2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { toast } from 'sonner';
+import { z } from 'zod';
+import { handleError } from '@/lib/errorHandler';
+
+const messageSchema = z.object({
+  conteudo: z.string()
+    .trim()
+    .min(1, 'Mensagem não pode estar vazia')
+    .max(10000, 'Máximo 10.000 caracteres'),
+  lead_id: z.string().uuid(),
+  tipo: z.enum(['text', 'image', 'video', 'audio', 'document'])
+});
 
 interface Message {
   id: string;
@@ -53,7 +64,7 @@ const MessageList = ({ leadId, refreshKey }: MessageListProps) => {
       if (error) throw error;
       setMessages(data || []);
     } catch (error) {
-      console.error('Erro ao carregar mensagens:', error);
+      handleError(error, 'Erro ao carregar mensagens');
     } finally {
       setLoading(false);
     }
@@ -66,13 +77,21 @@ const MessageList = ({ leadId, refreshKey }: MessageListProps) => {
 
     try {
       setSending(true);
+      
+      // Validate message
+      const validated = messageSchema.parse({
+        conteudo: newMessage.trim(),
+        lead_id: leadId,
+        tipo: 'text'
+      });
+      
       const { error } = await supabase
         .from('messages')
         .insert({
-          lead_id: leadId,
-          conteudo: newMessage.trim(),
+          lead_id: validated.lead_id,
+          conteudo: validated.conteudo,
           direction: 'out',
-          tipo: 'text',
+          tipo: validated.tipo,
           autor_id: user.id,
         });
 
@@ -82,8 +101,11 @@ const MessageList = ({ leadId, refreshKey }: MessageListProps) => {
       fetchMessages();
       toast.success('Mensagem enviada');
     } catch (error) {
-      console.error('Erro ao enviar mensagem:', error);
-      toast.error('Erro ao enviar mensagem');
+      if (error instanceof z.ZodError) {
+        toast.error(error.errors[0].message);
+      } else {
+        handleError(error, 'Erro ao enviar mensagem');
+      }
     } finally {
       setSending(false);
     }
@@ -146,20 +168,26 @@ const MessageList = ({ leadId, refreshKey }: MessageListProps) => {
       </ScrollArea>
 
       <div className="border-t p-4">
-        <form onSubmit={handleSendMessage} className="flex gap-2">
-          <Input
-            placeholder="Digite uma mensagem..."
-            value={newMessage}
-            onChange={(e) => setNewMessage(e.target.value)}
-            disabled={sending}
-          />
-          <Button type="submit" disabled={sending || !newMessage.trim()}>
-            {sending ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <Send className="h-4 w-4" />
-            )}
-          </Button>
+        <form onSubmit={handleSendMessage} className="space-y-2">
+          <div className="text-xs text-muted-foreground">
+            {newMessage.length} / 10.000 caracteres
+          </div>
+          <div className="flex gap-2">
+            <Input
+              placeholder="Digite uma mensagem..."
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
+              disabled={sending}
+              maxLength={10000}
+            />
+            <Button type="submit" disabled={sending || !newMessage.trim()}>
+              {sending ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
         </form>
       </div>
     </div>

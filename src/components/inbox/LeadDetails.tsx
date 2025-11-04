@@ -14,6 +14,7 @@ import { ptBR } from 'date-fns/locale';
 import VisitReportForm from '@/components/visits/VisitReportForm';
 import VisitReportsList from '@/components/visits/VisitReportsList';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { handleError } from '@/lib/errorHandler';
 
 interface LeadDetailsProps {
   leadId: string | null;
@@ -69,7 +70,7 @@ const LeadDetails = ({ leadId }: LeadDetailsProps) => {
       if (error) throw error;
       setLead(data);
     } catch (error) {
-      console.error('Error fetching lead:', error);
+      handleError(error, 'Erro ao carregar detalhes do lead');
     }
   };
 
@@ -86,7 +87,7 @@ const LeadDetails = ({ leadId }: LeadDetailsProps) => {
       if (error) throw error;
       setNotes(data as any || []);
     } catch (error) {
-      console.error('Error fetching notes:', error);
+      handleError(error, 'Erro ao carregar notas');
     }
   };
 
@@ -107,7 +108,7 @@ const LeadDetails = ({ leadId }: LeadDetailsProps) => {
         description: 'O status do lead foi atualizado com sucesso.',
       });
     } catch (error) {
-      console.error('Error updating status:', error);
+      handleError(error, 'Erro ao atualizar status');
       toast({
         title: 'Erro ao atualizar status',
         description: 'Não foi possível atualizar o status. Tente novamente.',
@@ -136,7 +137,7 @@ const LeadDetails = ({ leadId }: LeadDetailsProps) => {
         description: 'A nota foi salva com sucesso.',
       });
     } catch (error) {
-      console.error('Error adding note:', error);
+      handleError(error, 'Erro ao adicionar nota');
       toast({
         title: 'Erro ao adicionar nota',
         description: 'Não foi possível salvar a nota. Tente novamente.',
