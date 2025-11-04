@@ -16,7 +16,8 @@ import {
   Package,
   BookOpen,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SidebarProps {
   activePage: string;
@@ -24,11 +25,89 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
-  const { userRole } = useAuth();
+  const { user, userRole } = useAuth();
   const [openGroups, setOpenGroups] = useState<string[]>(["clientes", "equipe", "administracao"]);
+  const [modulePermissions, setModulePermissions] = useState<Record<string, boolean>>({});
+  const [loading, setLoading] = useState(true);
 
   const toggleGroup = (groupId: string) => {
     setOpenGroups((prev) => (prev.includes(groupId) ? prev.filter((id) => id !== groupId) : [...prev, groupId]));
+  };
+
+  useEffect(() => {
+    if (user?.id) {
+      fetchModulePermissions();
+    }
+  }, [user?.id]);
+
+  const fetchModulePermissions = async () => {
+    if (!user?.id) return;
+
+    try {
+      // Buscar role_id do usuário (pode estar em role ou role_id)
+      const { data: userRoleData, error: roleError } = await supabase
+        .from("user_roles")
+        .select("role, role_id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (roleError || !userRoleData) {
+        setLoading(false);
+        return;
+      }
+
+      let roleId = (userRoleData as any).role_id;
+
+      // Se role_id não existe, buscar pelo enum role
+      if (!roleId && (userRoleData as any).role) {
+        const { data: roleData } = await supabase
+          .from("roles" as any)
+          .select("id")
+          .ilike("nome", (userRoleData as any).role)
+          .maybeSingle();
+
+        roleId = (roleData as any)?.id;
+      }
+
+      if (!roleId) {
+        setLoading(false);
+        return;
+      }
+
+      // Buscar permissões do role
+      const { data: permissions, error: permError } = await supabase
+        .from("role_module_permissions" as any)
+        .select(`
+          module_id,
+          can_view,
+          modules!inner(codigo)
+        `)
+        .eq("role_id", roleId)
+        .eq("can_view", true);
+
+      if (permError) throw permError;
+
+      // Criar mapa de permissões por código do módulo
+      const permMap: Record<string, boolean> = {};
+      (permissions as any[])?.forEach((perm: any) => {
+        if (perm.modules?.codigo) {
+          permMap[perm.modules.codigo] = true;
+        }
+      });
+
+      setModulePermissions(permMap);
+    } catch (error) {
+      console.error("Error fetching permissions:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const hasModulePermission = (moduleCode: string) => {
+    // Admin sempre tem acesso
+    if (userRole === "admin") return true;
+    // Verificar permissão específica
+    return modulePermissions[moduleCode] === true;
   };
 
   const menuGroups = [
@@ -66,7 +145,22 @@ const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
     },
   ];
 
-  const visibleGroups = menuGroups.filter((group) => userRole && group.roles.includes(userRole));
+  const visibleGroups = menuGroups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => hasModulePermission(item.id)),
+    }))
+    .filter((group) => group.items.length > 0);
+
+  if (loading) {
+    return (
+      <aside className="w-64 border-r bg-card shadow-sm">
+        <div className="flex items-center justify-center h-full">
+          <p className="text-muted-foreground">Carregando...</p>
+        </div>
+      </aside>
+    );
+  }
 
   return (
     <aside className="w-64 border-r bg-card shadow-sm">
