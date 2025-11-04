@@ -118,7 +118,7 @@ const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
         <div className="p-4 border-t">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <MessageSquare className="w-4 h-4" />
-            <span>Plataforma Genius v1.0</span>
+            <span>Plataforma Genius BETA</span>
           </div>
         </div>
       </div>
