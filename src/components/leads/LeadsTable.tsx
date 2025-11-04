@@ -13,8 +13,19 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Download, Search, Filter } from 'lucide-react';
+import { useAuditLog } from '@/hooks/useAuditLog';
+import { Download, Search, Filter, Edit, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -41,8 +52,11 @@ const LeadsTable = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [leadToDelete, setLeadToDelete] = useState<string | null>(null);
   const { userRole } = useAuth();
   const { toast } = useToast();
+  const { logLeadAction } = useAuditLog();
 
   useEffect(() => {
     fetchLeads();
@@ -211,10 +225,62 @@ const LeadsTable = () => {
     }
   };
 
+  const handleDelete = async () => {
+    if (!leadToDelete) return;
+
+    try {
+      const { error } = await supabase
+        .from('leads')
+        .delete()
+        .eq('id', leadToDelete);
+
+      if (error) throw error;
+
+      await logLeadAction('excluir_lead', leadToDelete);
+
+      toast({
+        title: 'Lead excluído',
+        description: 'Lead foi removido com sucesso.',
+      });
+
+      fetchLeads();
+    } catch (error) {
+      console.error('Error deleting lead:', error);
+      toast({
+        title: 'Erro ao excluir',
+        description: 'Não foi possível excluir o lead.',
+        variant: 'destructive',
+      });
+    } finally {
+      setDeleteDialogOpen(false);
+      setLeadToDelete(null);
+    }
+  };
+
   const canExport = userRole === 'admin' || userRole === 'diretor';
+  const canEdit = userRole === 'admin' || userRole === 'gerente' || userRole === 'diretor';
+  const canDelete = userRole === 'admin';
 
   return (
-    <div className="space-y-4">
+    <>
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir este lead? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <div className="space-y-4">
       <div className="flex items-center gap-4 flex-wrap">
         <div className="relative flex-1 min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -267,6 +333,7 @@ const LeadsTable = () => {
               <TableHead className="text-right">Valor Total</TableHead>
               <TableHead>Responsável</TableHead>
               <TableHead>Criado</TableHead>
+              {(canEdit || canDelete) && <TableHead className="text-right">Ações</TableHead>}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -317,6 +384,42 @@ const LeadsTable = () => {
                       locale: ptBR,
                     })}
                   </TableCell>
+                  {(canEdit || canDelete) && (
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        {canEdit && (
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-8 w-8"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toast({
+                                title: 'Em desenvolvimento',
+                                description: 'Função de edição será implementada em breve.',
+                              });
+                            }}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                        )}
+                        {canDelete && (
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-8 w-8 text-destructive hover:text-destructive"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setLeadToDelete(lead.id);
+                              setDeleteDialogOpen(true);
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))
             )}
@@ -329,7 +432,7 @@ const LeadsTable = () => {
           Mostrando {filteredLeads.length} de {leads.length} leads
         </p>
       </div>
-    </div>
+    </>
   );
 };
 

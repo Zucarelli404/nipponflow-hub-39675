@@ -56,12 +56,13 @@ const Navbar = () => {
             </div>
             <div className="hidden sm:block">
               <h1 className="text-lg sm:text-xl font-bold text-foreground">
-                Graduação<span className="text-primary"> Infinita</span> ∞
+                Plataforma<span className="text-primary"> Genius</span> 
+                <span className="text-xs ml-1 text-muted-foreground">BETA</span>
               </h1>
             </div>
             <div className="sm:hidden">
               <h1 className="text-base font-bold text-foreground">
-                GI<span className="text-primary"> ∞</span>
+                Genius<span className="text-primary text-xs ml-1">BETA</span>
               </h1>
             </div>
           </div>
