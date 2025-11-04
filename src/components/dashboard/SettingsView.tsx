@@ -5,6 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import UsersManagement from '@/components/settings/UsersManagement';
 import OrganizationLinks from '@/components/settings/OrganizationLinks';
 import TeamHierarchy from '@/components/settings/TeamHierarchy';
+import WhatsAppConnection from '@/components/settings/WhatsAppConnection';
 
 const SettingsView = () => {
   return (
@@ -69,32 +70,7 @@ const SettingsView = () => {
         </TabsContent>
 
         <TabsContent value="integrations" className="mt-6">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Webhook className="h-5 w-5 text-primary" />
-                <CardTitle>EvolutionAPI</CardTitle>
-              </div>
-              <CardDescription>
-                Configure a integração com o WhatsApp
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <p className="text-sm text-muted-foreground">
-                  Para conectar o WhatsApp, você precisará:
-                </p>
-                <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
-                  <li>URL da instância EvolutionAPI</li>
-                  <li>Token de autenticação</li>
-                  <li>Configuração do webhook</li>
-                </ul>
-                <p className="text-xs text-muted-foreground mt-4">
-                  Status: <span className="text-destructive font-semibold">Não configurado</span>
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+          <WhatsAppConnection />
         </TabsContent>
 
         <TabsContent value="messages" className="mt-6">
