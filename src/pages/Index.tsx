@@ -14,10 +14,11 @@ import RemarketingView from '@/components/dashboard/RemarketingView';
 import EquipeView from '@/components/dashboard/EquipeView';
 import CandidatosView from '@/components/dashboard/CandidatosView';
 import EstoqueView from '@/components/dashboard/EstoqueView';
+import CursosView from '@/components/dashboard/CursosView';
 import RelatoriosView from '@/components/dashboard/RelatoriosView';
 import AnalyticsView from '@/components/dashboard/AnalyticsView';
 import SettingsView from '@/components/dashboard/SettingsView';
-import { Loader2, BookOpen } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 const Index = () => {
   const { user, userRole, loading } = useAuth();
@@ -65,19 +66,7 @@ const Index = () => {
       case 'estoque':
         return <EstoqueView />;
       case 'cursos':
-        return (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center space-y-4">
-              <BookOpen className="h-16 w-16 mx-auto text-muted-foreground" />
-              <div>
-                <h3 className="text-lg font-semibold">Sistema de Cursos</h3>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Aguarde enquanto configuramos o banco de dados...
-                </p>
-              </div>
-            </div>
-          </div>
-        );
+        return <CursosView />;
       case 'relatorios':
         return <RelatoriosView />;
       case 'analytics':
