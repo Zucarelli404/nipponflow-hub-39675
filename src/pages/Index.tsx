@@ -19,6 +19,7 @@ import GamificacaoView from '@/components/dashboard/GamificacaoView';
 import RelatoriosView from '@/components/dashboard/RelatoriosView';
 import AnalyticsView from '@/components/dashboard/AnalyticsView';
 import SettingsView from '@/components/dashboard/SettingsView';
+import { GamificationNotifications } from '@/components/gamification/GamificationNotifications';
 import { Loader2 } from 'lucide-react';
 
 const Index = () => {
@@ -88,6 +89,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <GamificationNotifications />
       <Navbar />
       <div className="flex flex-1 overflow-hidden">
         {/* Desktop Sidebar */}
