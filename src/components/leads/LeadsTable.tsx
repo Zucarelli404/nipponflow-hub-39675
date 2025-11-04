@@ -432,6 +432,7 @@ const LeadsTable = () => {
           Mostrando {filteredLeads.length} de {leads.length} leads
         </p>
       </div>
+      </div>
     </>
   );
 };

@@ -14,6 +14,7 @@ import {
   RefreshCw,
   UserPlus,
   Package,
+  BookOpen,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -51,6 +52,7 @@ const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
         { id: "equipe", label: "Equipe", icon: UserCheck },
         { id: "candidatos", label: "Candidatos", icon: UserPlus },
         { id: "estoque", label: "Estoque", icon: Package },
+        { id: "cursos", label: "Cursos", icon: BookOpen },
       ],
     },
     {
