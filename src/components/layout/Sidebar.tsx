@@ -15,6 +15,7 @@ import {
   UserPlus,
   Package,
   BookOpen,
+  Trophy,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -132,6 +133,7 @@ const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
         { id: "candidatos", label: "Candidatos", icon: UserPlus },
         { id: "estoque", label: "Estoque", icon: Package },
         { id: "cursos", label: "Cursos", icon: BookOpen },
+        { id: "gamificacao", label: "Gamificação", icon: Trophy },
       ],
     },
     {

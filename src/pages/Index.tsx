@@ -15,6 +15,7 @@ import EquipeView from '@/components/dashboard/EquipeView';
 import CandidatosView from '@/components/dashboard/CandidatosView';
 import EstoqueView from '@/components/dashboard/EstoqueView';
 import CursosView from '@/components/dashboard/CursosView';
+import GamificacaoView from '@/components/dashboard/GamificacaoView';
 import RelatoriosView from '@/components/dashboard/RelatoriosView';
 import AnalyticsView from '@/components/dashboard/AnalyticsView';
 import SettingsView from '@/components/dashboard/SettingsView';
@@ -67,6 +68,8 @@ const Index = () => {
         return <EstoqueView />;
       case 'cursos':
         return <CursosView />;
+      case 'gamificacao':
+        return <GamificacaoView />;
       case 'relatorios':
         return <RelatoriosView />;
       case 'analytics':
