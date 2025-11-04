@@ -48,31 +48,36 @@ const Navbar = () => {
 
   return (
     <nav className="border-b bg-card shadow-sm">
-      <div className="container mx-auto px-4 py-3">
+      <div className="container mx-auto px-3 sm:px-4 py-2 sm:py-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary rounded-lg shadow-glow">
-              <MessageSquare className="w-5 h-5 text-primary-foreground" />
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div className="p-1.5 sm:p-2 bg-primary rounded-lg shadow-glow">
+              <MessageSquare className="w-4 h-4 sm:w-5 sm:h-5 text-primary-foreground" />
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-foreground">
+            <div className="hidden sm:block">
+              <h1 className="text-lg sm:text-xl font-bold text-foreground">
                 Graduação<span className="text-primary"> Infinita</span> ∞
+              </h1>
+            </div>
+            <div className="sm:hidden">
+              <h1 className="text-base font-bold text-foreground">
+                GI<span className="text-primary"> ∞</span>
               </h1>
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             {userRole && (
-              <Badge className={getRoleColor(userRole)}>
+              <Badge className={`${getRoleColor(userRole)} text-xs hidden sm:inline-flex`}>
                 {getRoleLabel(userRole)}
               </Badge>
             )}
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-                  <Avatar className="h-10 w-10">
-                    <AvatarFallback className="bg-primary text-primary-foreground">
+                <Button variant="ghost" className="relative h-8 w-8 sm:h-10 sm:w-10 rounded-full">
+                  <Avatar className="h-8 w-8 sm:h-10 sm:w-10">
+                    <AvatarFallback className="bg-primary text-primary-foreground text-xs sm:text-sm">
                       {getInitials(user?.email)}
                     </AvatarFallback>
                   </Avatar>

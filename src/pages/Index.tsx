@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import Navbar from '@/components/layout/Navbar';
 import Sidebar from '@/components/layout/Sidebar';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
+import { Menu } from 'lucide-react';
 import InboxView from '@/components/dashboard/InboxView';
 import LeadsView from '@/components/dashboard/LeadsView';
 import VisitasView from '@/components/dashboard/VisitasView';
@@ -20,6 +23,7 @@ const Index = () => {
   const { user, userRole, loading } = useAuth();
   const navigate = useNavigate();
   const [activePage, setActivePage] = useState('leads');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -71,12 +75,33 @@ const Index = () => {
     }
   };
 
+  const handleNavigate = (page: string) => {
+    setActivePage(page);
+    setMobileMenuOpen(false);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Navbar />
-      <div className="flex flex-1">
-        <Sidebar activePage={activePage} onNavigate={setActivePage} />
-        <main className="flex-1 p-6 overflow-auto">
+      <div className="flex flex-1 overflow-hidden">
+        {/* Desktop Sidebar */}
+        <div className="hidden lg:block">
+          <Sidebar activePage={activePage} onNavigate={setActivePage} />
+        </div>
+
+        {/* Mobile Sidebar */}
+        <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+          <SheetTrigger asChild className="lg:hidden fixed bottom-4 right-4 z-50 shadow-lg">
+            <Button size="icon" className="h-14 w-14 rounded-full bg-primary text-primary-foreground">
+              <Menu className="h-6 w-6" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="p-0 w-64">
+            <Sidebar activePage={activePage} onNavigate={handleNavigate} />
+          </SheetContent>
+        </Sheet>
+
+        <main className="flex-1 p-3 sm:p-4 lg:p-6 overflow-auto">
           {renderContent()}
         </main>
       </div>

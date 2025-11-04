@@ -116,7 +116,7 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center overflow-hidden relative" style={{ backgroundColor: '#0a0a0a', fontFamily: 'Poppins, sans-serif' }}>
+    <div className="min-h-screen flex items-center justify-center overflow-hidden relative p-4" style={{ backgroundColor: '#0a0a0a', fontFamily: 'Poppins, sans-serif' }}>
       {/* Animated background shapes */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute w-20 h-20 border-2 rounded-lg animate-float" style={{ 
@@ -147,19 +147,19 @@ const Auth = () => {
       </div>
 
       {/* Login Box */}
-      <div className="relative z-10 w-full max-w-[380px] mx-4 p-12 rounded-3xl text-center animate-fade-in" style={{
+      <div className="relative z-10 w-full max-w-[380px] mx-auto p-6 sm:p-12 rounded-3xl text-center animate-fade-in" style={{
         background: 'rgba(17, 17, 17, 0.95)',
         boxShadow: '0 0 40px rgba(255, 165, 0, 0.25)'
       }}>
         {/* Logo */}
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <h1 className="text-3xl font-bold text-white" style={{ letterSpacing: '0.5px' }}>
+        <div className="flex items-center justify-center gap-2 mb-3 sm:mb-4">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white" style={{ letterSpacing: '0.5px' }}>
             Graduação<span style={{ color: '#ffa500' }}>Infinita</span>
           </h1>
-          <div className="text-2xl transform rotate-12" style={{ color: '#ffa500' }}>∞</div>
+          <div className="text-xl sm:text-2xl transform rotate-12" style={{ color: '#ffa500' }}>∞</div>
         </div>
         
-        <h2 className="text-base font-normal mb-8" style={{ color: '#aaa' }}>
+        <h2 className="text-sm sm:text-base font-normal mb-6 sm:mb-8" style={{ color: '#aaa' }}>
           Acesse sua jornada de aprendizado
         </h2>
 
