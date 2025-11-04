@@ -1,5 +1,5 @@
-import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,42 +7,42 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { MessageSquare, LogOut, User, Settings } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { MessageSquare, LogOut, User, Settings } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const Navbar = () => {
   const { user, userRole, signOut } = useAuth();
 
   const getRoleLabel = (role: string | null) => {
     switch (role) {
-      case 'admin':
-        return 'Administrador';
-      case 'diretor':
-        return 'Diretor';
-      case 'gerente':
-        return 'Gerente Comercial';
+      case "admin":
+        return "Administrador";
+      case "diretor":
+        return "Diretor";
+      case "gerente":
+        return "Gerente Comercial";
       default:
-        return 'Usuário';
+        return "Usuário";
     }
   };
 
   const getRoleColor = (role: string | null) => {
     switch (role) {
-      case 'admin':
-        return 'bg-destructive text-destructive-foreground';
-      case 'diretor':
-        return 'bg-warning text-warning-foreground';
-      case 'gerente':
-        return 'bg-accent text-accent-foreground';
+      case "admin":
+        return "bg-destructive text-destructive-foreground";
+      case "diretor":
+        return "bg-warning text-warning-foreground";
+      case "gerente":
+        return "bg-accent text-accent-foreground";
       default:
-        return 'bg-muted text-muted-foreground';
+        return "bg-muted text-muted-foreground";
     }
   };
 
   const getInitials = (email: string | undefined) => {
-    if (!email) return 'U';
+    if (!email) return "U";
     return email.charAt(0).toUpperCase();
   };
 
@@ -56,7 +56,7 @@ const Navbar = () => {
             </div>
             <div className="hidden sm:block">
               <h1 className="text-lg sm:text-xl font-bold text-foreground">
-                Plataforma<span className="text-primary"> Genius</span> 
+                <span className="text-primary"> Genius</span>
                 <span className="text-xs ml-1 text-muted-foreground">BETA</span>
               </h1>
             </div>
@@ -88,9 +88,7 @@ const Navbar = () => {
                 <DropdownMenuLabel>
                   <div className="flex flex-col space-y-1">
                     <p className="text-sm font-medium">{user?.email}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {getRoleLabel(userRole)}
-                    </p>
+                    <p className="text-xs text-muted-foreground">{getRoleLabel(userRole)}</p>
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
@@ -98,7 +96,7 @@ const Navbar = () => {
                   <User className="mr-2 h-4 w-4" />
                   Perfil
                 </DropdownMenuItem>
-                {userRole === 'admin' && (
+                {userRole === "admin" && (
                   <DropdownMenuItem>
                     <Settings className="mr-2 h-4 w-4" />
                     Configurações
