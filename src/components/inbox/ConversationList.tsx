@@ -126,19 +126,19 @@ const ConversationList = ({ selectedLeadId, onSelectLead }: ConversationListProp
               <button
                 key={lead.id}
                 onClick={() => onSelectLead(lead.id)}
-                className={`w-full p-3 rounded-lg text-left transition-colors hover:bg-accent ${
+                className={`w-full p-2.5 sm:p-3 rounded-lg text-left transition-colors hover:bg-accent ${
                   selectedLeadId === lead.id ? 'bg-accent' : ''
                 }`}
               >
-                <div className="flex items-start justify-between mb-1">
+                <div className="flex items-start justify-between mb-1 gap-2">
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-sm truncate">{lead.nome}</h3>
+                    <h3 className="font-semibold text-xs sm:text-sm truncate">{lead.nome}</h3>
                     <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                      <Phone className="h-3 w-3" />
-                      <span>{lead.telefone}</span>
+                      <Phone className="h-3 w-3 flex-shrink-0" />
+                      <span className="truncate">{lead.telefone}</span>
                     </div>
                   </div>
-                  <Badge className={`${getStatusColor(lead.status)} text-white text-xs`}>
+                  <Badge className={`${getStatusColor(lead.status)} text-white text-[10px] sm:text-xs flex-shrink-0`}>
                     {getStatusLabel(lead.status)}
                   </Badge>
                 </div>

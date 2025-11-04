@@ -195,12 +195,12 @@ const LeadDetails = ({ leadId }: LeadDetailsProps) => {
   const canEdit = userRole === 'admin' || userRole === 'gerente';
 
   return (
-    <div className="space-y-4 h-full overflow-auto">
+    <div className="space-y-4">
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Informações do Lead</CardTitle>
+          <CardTitle className="text-base sm:text-lg">Informações do Lead</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3 sm:space-y-4">
           <div className="flex items-center gap-2 text-sm">
             <User className="h-4 w-4 text-muted-foreground" />
             <span className="font-semibold">{lead.nome}</span>
@@ -258,19 +258,19 @@ const LeadDetails = ({ leadId }: LeadDetailsProps) => {
 
       <Tabs defaultValue="notes" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="notes">Notas Internas</TabsTrigger>
-          <TabsTrigger value="visits">Visitas</TabsTrigger>
+          <TabsTrigger value="notes" className="text-xs sm:text-sm">Notas</TabsTrigger>
+          <TabsTrigger value="visits" className="text-xs sm:text-sm">Visitas</TabsTrigger>
         </TabsList>
 
         <TabsContent value="notes">
           <Card>
         <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <FileText className="h-5 w-5" />
+          <CardTitle className="text-sm sm:text-base flex items-center gap-2">
+            <FileText className="h-4 w-4 sm:h-5 sm:w-5" />
             Notas Internas
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3 sm:space-y-4">
           <div className="space-y-2">
             <Textarea
               placeholder="Adicione uma nota interna..."
@@ -314,11 +314,11 @@ const LeadDetails = ({ leadId }: LeadDetailsProps) => {
       </Card>
         </TabsContent>
 
-        <TabsContent value="visits" className="space-y-4">
+        <TabsContent value="visits" className="space-y-3 sm:space-y-4">
           {canEdit && <VisitReportForm leadId={leadId} onSuccess={handleVisitReportSuccess} />}
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Histórico de Visitas</CardTitle>
+              <CardTitle className="text-sm sm:text-base">Histórico de Visitas</CardTitle>
             </CardHeader>
             <CardContent>
               <VisitReportsList key={refreshReports} leadId={leadId} />
