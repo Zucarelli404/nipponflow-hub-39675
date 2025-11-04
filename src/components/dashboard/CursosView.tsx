@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { BookOpen, Video, Radio, FileText, Plus } from 'lucide-react';
+import { BookOpen, Video, Radio, FileText, Plus, Play, Calendar } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -12,6 +12,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import LivePlayer from '@/components/courses/LivePlayer';
+import TeleAulaRoom from '@/components/courses/TeleAulaRoom';
 
 interface Course {
   id: string;
@@ -30,6 +32,8 @@ const CursosView = () => {
   const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [activeLive, setActiveLive] = useState<Course | null>(null);
+  const [activeTeleAula, setActiveTeleAula] = useState<Course | null>(null);
   const [formData, setFormData] = useState({
     titulo: '',
     descricao: '',
@@ -168,6 +172,22 @@ const CursosView = () => {
     }
   };
 
+  const handleAccessCourse = (course: Course) => {
+    if (course.tipo === 'live') {
+      setActiveLive(course);
+    } else if (course.tipo === 'teleaula') {
+      setActiveTeleAula(course);
+    } else if (course.conteudo_url) {
+      window.open(course.conteudo_url, '_blank');
+    } else {
+      toast({
+        title: 'Conteúdo não disponível',
+        description: 'Este conteúdo ainda não possui URL configurada.',
+        variant: 'destructive',
+      });
+    }
+  };
+
   const canCreate = userRole === 'admin' || userRole === 'diretor';
 
   const filterByType = (type?: string) => {
@@ -176,7 +196,28 @@ const CursosView = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <>
+      {activeLive && (
+        <LivePlayer
+          courseId={activeLive.id}
+          titulo={activeLive.titulo}
+          descricao={activeLive.descricao}
+          dataLive={activeLive.data_live || ''}
+          streamUrl={activeLive.conteudo_url || undefined}
+          onClose={() => setActiveLive(null)}
+        />
+      )}
+
+      {activeTeleAula && (
+        <TeleAulaRoom
+          courseId={activeTeleAula.id}
+          titulo={activeTeleAula.titulo}
+          descricao={activeTeleAula.descricao}
+          onClose={() => setActiveTeleAula(null)}
+        />
+      )}
+
+      <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h2 className="text-2xl sm:text-3xl font-bold text-foreground">Cursos e Conteúdos</h2>
@@ -331,21 +372,38 @@ const CursosView = () => {
                     </div>
                     <CardTitle className="text-lg mt-2">{course.titulo}</CardTitle>
                     <CardDescription>{course.descricao}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2 text-sm text-muted-foreground">
-                      <p>Autor: {course.autor_nome}</p>
-                      {course.duracao_minutos && (
-                        <p>Duração: {course.duracao_minutos} minutos</p>
-                      )}
-                      {course.data_live && (
-                        <p>
-                          Data: {new Date(course.data_live).toLocaleString('pt-BR')}
-                        </p>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2 text-sm text-muted-foreground">
+                        <p>Autor: {course.autor_nome}</p>
+                        {course.duracao_minutos && (
+                          <p>Duração: {course.duracao_minutos} minutos</p>
+                        )}
+                        {course.data_live && (
+                          <div className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            <p>
+                              {new Date(course.data_live).toLocaleString('pt-BR')}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <Button 
+                        className="w-full"
+                        onClick={() => handleAccessCourse(course)}
+                      >
+                        {course.tipo === 'live' && <Radio className="mr-2 h-4 w-4" />}
+                        {course.tipo === 'teleaula' && <Video className="mr-2 h-4 w-4" />}
+                        {course.tipo === 'aula' && <Play className="mr-2 h-4 w-4" />}
+                        {course.tipo === 'ebook' && <BookOpen className="mr-2 h-4 w-4" />}
+                        {course.tipo === 'live' ? 'Assistir Live' : 
+                         course.tipo === 'teleaula' ? 'Entrar na Sala' : 
+                         course.tipo === 'aula' ? 'Assistir Aula' : 'Ler E-book'}
+                      </Button>
+                    </CardFooter>
+                  </Card>
               ))}
             </div>
           )}
@@ -380,28 +438,46 @@ const CursosView = () => {
                       </div>
                       <CardTitle className="text-lg mt-2">{course.titulo}</CardTitle>
                       <CardDescription>{course.descricao}</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-2 text-sm text-muted-foreground">
-                        <p>Autor: {course.autor_nome}</p>
-                        {course.duracao_minutos && (
-                          <p>Duração: {course.duracao_minutos} minutos</p>
-                        )}
-                        {course.data_live && (
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2 text-sm text-muted-foreground">
+                      <p>Autor: {course.autor_nome}</p>
+                      {course.duracao_minutos && (
+                        <p>Duração: {course.duracao_minutos} minutos</p>
+                      )}
+                      {course.data_live && (
+                        <div className="flex items-center gap-1">
+                          <Calendar className="h-3 w-3" />
                           <p>
-                            Data: {new Date(course.data_live).toLocaleString('pt-BR')}
+                            {new Date(course.data_live).toLocaleString('pt-BR')}
                           </p>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <Button 
+                      className="w-full"
+                      onClick={() => handleAccessCourse(course)}
+                    >
+                      {course.tipo === 'live' && <Radio className="mr-2 h-4 w-4" />}
+                      {course.tipo === 'teleaula' && <Video className="mr-2 h-4 w-4" />}
+                      {course.tipo === 'aula' && <Play className="mr-2 h-4 w-4" />}
+                      {course.tipo === 'ebook' && <BookOpen className="mr-2 h-4 w-4" />}
+                      {course.tipo === 'live' ? 'Assistir Live' : 
+                       course.tipo === 'teleaula' ? 'Entrar na Sala' : 
+                       course.tipo === 'aula' ? 'Assistir Aula' : 'Ler E-book'}
+                    </Button>
+                  </CardFooter>
+                </Card>
                 ))}
               </div>
             )}
           </TabsContent>
         ))}
       </Tabs>
-    </div>
+      </div>
+    </>
   );
 };
 
