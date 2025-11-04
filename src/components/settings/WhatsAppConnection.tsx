@@ -7,6 +7,23 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, CheckCircle, XCircle, RefreshCw } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { z } from 'zod';
+
+const whatsappConnectionSchema = z.object({
+  instance_name: z.string()
+    .trim()
+    .min(3, 'Mínimo 3 caracteres')
+    .max(50, 'Máximo 50 caracteres')
+    .regex(/^[a-zA-Z0-9_-]+$/, 'Apenas letras, números, _ e -'),
+  evolution_api_url: z.string()
+    .url('URL inválida')
+    .max(255, 'URL muito longa')
+    .refine(url => url.startsWith('https://'), 'URL deve usar HTTPS'),
+  api_key: z.string()
+    .trim()
+    .min(20, 'API key muito curta')
+    .max(200, 'API key muito longa')
+});
 
 interface WhatsAppConnectionData {
   id: string;
@@ -75,14 +92,16 @@ const WhatsAppConnection = () => {
   const handleSave = async () => {
     try {
       setIsSaving(true);
+      
+      // Validate input
+      const validatedData = whatsappConnectionSchema.parse(formData);
+      
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Usuário não autenticado');
 
       const connectionData = {
         user_id: user.id,
-        instance_name: formData.instance_name,
-        evolution_api_url: formData.evolution_api_url,
-        api_key: formData.api_key,
+        ...validatedData,
         status: 'disconnected',
       };
 
@@ -113,6 +132,14 @@ const WhatsAppConnection = () => {
 
       await fetchConnection();
     } catch (error) {
+      if (error instanceof z.ZodError) {
+        toast({
+          title: 'Dados inválidos',
+          description: error.errors[0].message,
+          variant: 'destructive',
+        });
+        return;
+      }
       console.error('Error saving connection:', error);
       toast({
         title: 'Erro',
