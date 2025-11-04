@@ -1,5 +1,4 @@
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
 
 interface AuditLogParams {
   acao: string;
@@ -9,8 +8,6 @@ interface AuditLogParams {
 }
 
 export const useAuditLog = () => {
-  const { toast } = useToast();
-
   const logAction = async ({ acao, alvo_tipo, alvo_id, detalhes }: AuditLogParams) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
@@ -27,11 +24,11 @@ export const useAuditLog = () => {
           detalhes,
         });
 
-      if (error) {
+      if (error && import.meta.env.DEV) {
         console.error('Erro ao registrar log de auditoria:', error);
       }
     } catch (error) {
-      console.error('Erro ao registrar log:', error);
+      if (import.meta.env.DEV) console.error('Erro ao registrar log:', error);
     }
   };
 

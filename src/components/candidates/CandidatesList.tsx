@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CheckCircle2, XCircle, Clock, Eye } from 'lucide-react';
+import { handleError } from '@/lib/errorHandler';
 
 interface Candidate {
   id: string;
@@ -39,7 +40,7 @@ const CandidatesList = () => {
       if (error) throw error;
       setCandidates(data as any || []);
     } catch (error) {
-      console.error('Error fetching candidates:', error);
+      if (import.meta.env.DEV) console.error('Error fetching candidates:', error);
     } finally {
       setLoading(false);
     }
@@ -62,12 +63,7 @@ const CandidatesList = () => {
 
       fetchCandidates();
     } catch (error) {
-      console.error('Error updating candidate status:', error);
-      toast({
-        title: 'Erro ao atualizar status',
-        description: 'Não foi possível atualizar o status. Tente novamente.',
-        variant: 'destructive',
-      });
+      handleError(error, 'Não foi possível atualizar o status. Tente novamente.');
     }
   };
 

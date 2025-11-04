@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { handleError } from '@/lib/errorHandler';
 
 interface AuthContextType {
   user: User | null;
@@ -64,7 +65,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .maybeSingle();
 
       if (error) {
-        console.error('Error fetching user role:', error);
+        if (import.meta.env.DEV) console.error('Error fetching user role:', error);
         setUserRole(null);
       } else if (data) {
         setUserRole(data.role as 'admin' | 'diretor' | 'gerente');
@@ -72,7 +73,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUserRole(null);
       }
     } catch (error) {
-      console.error('Error fetching user role:', error);
+      if (import.meta.env.DEV) console.error('Error fetching user role:', error);
       setUserRole(null);
     }
   };
@@ -88,7 +89,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return { error: null };
     } catch (error) {
-      console.error('Sign in error:', error);
+      if (import.meta.env.DEV) console.error('Sign in error:', error);
       return { error: error as Error };
     }
   };
@@ -110,7 +111,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       return { error: null };
     } catch (error) {
-      console.error('Sign up error:', error);
+      if (import.meta.env.DEV) console.error('Sign up error:', error);
       return { error: error as Error };
     }
   };

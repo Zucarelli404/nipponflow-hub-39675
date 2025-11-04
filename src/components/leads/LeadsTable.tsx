@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { handleError } from '@/lib/errorHandler';
 import {
   Table,
   TableBody,
@@ -116,12 +117,7 @@ const LeadsTable = () => {
 
       setLeads(leadsWithMetrics);
     } catch (error) {
-      console.error('Error fetching leads:', error);
-      toast({
-        title: 'Erro ao carregar leads',
-        description: 'Não foi possível carregar os leads. Tente novamente.',
-        variant: 'destructive',
-      });
+      handleError(error, 'Não foi possível carregar os leads. Tente novamente.');
     } finally {
       setLoading(false);
     }
@@ -245,12 +241,7 @@ const LeadsTable = () => {
 
       fetchLeads();
     } catch (error) {
-      console.error('Error deleting lead:', error);
-      toast({
-        title: 'Erro ao excluir',
-        description: 'Não foi possível excluir o lead.',
-        variant: 'destructive',
-      });
+      handleError(error, 'Não foi possível excluir o lead.');
     } finally {
       setDeleteDialogOpen(false);
       setLeadToDelete(null);

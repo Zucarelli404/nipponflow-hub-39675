@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { UserPlus } from 'lucide-react';
+import { handleError } from '@/lib/errorHandler';
 
 interface CandidateFormProps {
   onSuccess?: () => void;
@@ -56,12 +57,7 @@ const CandidateForm = ({ onSuccess }: CandidateFormProps) => {
       setOpen(false);
       onSuccess?.();
     } catch (error) {
-      console.error('Error creating candidate:', error);
-      toast({
-        title: 'Erro ao cadastrar candidato',
-        description: 'Não foi possível adicionar o candidato. Tente novamente.',
-        variant: 'destructive',
-      });
+      handleError(error, 'Não foi possível adicionar o candidato. Tente novamente.');
     } finally {
       setLoading(false);
     }
