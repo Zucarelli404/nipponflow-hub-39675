@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { TrailHeader } from "./TrailHeader";
-import { TrailTitle } from "./TrailTitle";
 import { TrailPath } from "./TrailPath";
 import { TrailFooter } from "./TrailFooter";
 import { LevelDetailModal } from "./LevelDetailModal";
@@ -91,9 +90,9 @@ const GraduacaoInfinitaView = () => {
   }
 
   return (
-    <div className="min-h-screen pb-20">
-      <TrailHeader userProgression={userProgression} />
-      <TrailTitle
+    <div className="min-h-screen pb-20 bg-white">
+      <TrailHeader 
+        userProgression={userProgression}
         checkpointLabel={getCheckpointLabel(userProgression?.current_checkpoint || "graduado")}
         overallProgress={calculateOverallProgress()}
       />

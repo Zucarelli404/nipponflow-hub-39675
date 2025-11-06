@@ -19,87 +19,80 @@ export const TrailLevel = ({ progress, onClick }: TrailLevelProps) => {
   const isLocked = status === "locked";
   const hasProgress = progresso_atual > 0 && level.requisito_quantidade > 0;
 
-  const circleClasses = cn(
-    "w-16 h-16 rounded-full flex items-center justify-center border-4 transition-all duration-300",
-    {
-      "bg-green-500 border-green-600": isCompleted,
-      "bg-gradient-to-br from-green-400 to-emerald-500 border-green-600 shadow-lg animate-pulse": isAvailable,
-      "bg-gray-300 border-gray-400": isLocked,
-    }
-  );
-
   return (
-    <div className="flex items-center gap-4 group">
-      {/* Node Circle */}
-      <div className="relative flex-shrink-0">
-        <div className={circleClasses}>
-          {isCompleted && <Check className="w-8 h-8 text-white" strokeWidth={3} />}
-          {isAvailable && <Icon className="w-8 h-8 text-white" />}
-          {isLocked && <Lock className="w-6 h-6 text-gray-500" />}
-        </div>
-        
-        {/* Glow effect for available levels */}
-        {isAvailable && (
-          <div className="absolute inset-0 rounded-full bg-green-400 opacity-30 blur-xl animate-pulse" />
+    <div className="flex items-start gap-4">
+      {/* Icon */}
+      <div
+        className={cn(
+          "w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0 z-10 transition-all shadow-md",
+          isCompleted && "bg-green-500 text-white ring-4 ring-green-100",
+          isAvailable && !isCompleted && "bg-white border-4 border-green-500 text-green-600",
+          isLocked && "bg-gray-100 border-4 border-gray-300 text-gray-400"
         )}
+      >
+        {isCompleted && <Check className="w-8 h-8" />}
+        {isAvailable && !isCompleted && <Icon className="w-8 h-8" />}
+        {isLocked && <Lock className="w-6 h-6" />}
       </div>
 
-      {/* Content */}
-      <div className="flex-1 bg-card border rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1">
-            <h3 className="font-semibold text-lg text-foreground">{level.titulo}</h3>
-            <p className="text-sm text-muted-foreground mt-1">{level.descricao}</p>
+      {/* Content Card */}
+      <div
+        onClick={onClick}
+        className={cn(
+          "flex-1 rounded-xl p-4 cursor-pointer transition-all hover:scale-[1.02] shadow-sm hover:shadow-md",
+          isCompleted && "bg-green-50 border-2 border-green-200",
+          isAvailable && !isCompleted && "bg-white border-2 border-green-400 hover:border-green-500",
+          isLocked && "bg-gray-50 border-2 border-gray-200 opacity-60"
+        )}
+      >
+        <div className="space-y-2">
+          <h3 className="font-bold text-base text-gray-900">{level.titulo}</h3>
+          <p className="text-sm text-gray-600">{level.descricao}</p>
 
-            {/* Progress Bar */}
-            {hasProgress && !isCompleted && (
-              <div className="mt-3 space-y-1">
-                <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>Progresso</span>
-                  <span>
-                    {progresso_atual} / {level.requisito_quantidade}
-                  </span>
-                </div>
-                <Progress
-                  value={(progresso_atual / level.requisito_quantidade) * 100}
-                  className="h-2"
-                />
+          {/* Progress Bar */}
+          {hasProgress && !isCompleted && (
+            <div className="space-y-1">
+              <div className="flex justify-between text-xs text-gray-600">
+                <span>Progresso</span>
+                <span className="font-semibold">
+                  {progresso_atual} / {level.requisito_quantidade}
+                </span>
               </div>
-            )}
+              <Progress
+                value={(progresso_atual / level.requisito_quantidade) * 100}
+                className="h-2"
+              />
+            </div>
+          )}
 
-            {/* Rewards */}
-            {(level.recompensa_xp > 0 || level.recompensa_diamantes > 0) && (
-              <div className="mt-2 flex gap-3 text-xs">
-                {level.recompensa_xp > 0 && (
-                  <span className="text-amber-600 font-medium">+{level.recompensa_xp} XP</span>
-                )}
-                {level.recompensa_diamantes > 0 && (
-                  <span className="text-cyan-600 font-medium">+{level.recompensa_diamantes} 💎</span>
-                )}
-              </div>
-            )}
+          {/* Rewards */}
+          {(level.recompensa_xp > 0 || level.recompensa_diamantes > 0) && (
+            <div className="flex gap-3 text-xs">
+              {level.recompensa_xp > 0 && (
+                <span className="text-amber-600 font-bold">+{level.recompensa_xp} XP</span>
+              )}
+              {level.recompensa_diamantes > 0 && (
+                <span className="text-cyan-600 font-bold">+{level.recompensa_diamantes} 💎</span>
+              )}
+            </div>
+          )}
 
-            {/* Status Badge */}
-            {isCompleted && (
-              <span className="inline-block mt-2 px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded">
-                COMPLETO
-              </span>
-            )}
-            {isLocked && (
-              <span className="inline-block mt-2 px-2 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded">
-                Complete o nível anterior
-              </span>
-            )}
-          </div>
-
-          {/* Action Button */}
-          {isAvailable && (
-            <Button
-              onClick={onClick}
-              className="bg-green-500 hover:bg-green-600 text-white font-bold shadow-lg animate-pulse"
-            >
-              COMEÇAR
-            </Button>
+          {/* Status Badge or Action */}
+          {isCompleted && (
+            <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">
+              <Check className="w-3 h-3" />
+              COMPLETO
+            </span>
+          )}
+          {isAvailable && !isCompleted && (
+            <button className="w-full mt-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded-lg transition-colors">
+              INICIAR
+            </button>
+          )}
+          {isLocked && (
+            <span className="inline-block px-3 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
+              🔒 Bloqueado
+            </span>
           )}
         </div>
       </div>

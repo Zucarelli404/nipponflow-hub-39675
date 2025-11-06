@@ -21,33 +21,37 @@ export const TrailCheckpoint = ({ progress, onClick }: TrailCheckpointProps) => 
     : 0;
 
   return (
-    <div className="flex justify-center my-8">
-      <div 
+    <div className="flex items-start gap-4">
+      {/* Icon */}
+      <div
         className={cn(
-          "relative max-w-md w-full bg-gradient-to-br rounded-xl p-6 border-4 transition-all duration-300 cursor-pointer",
-          {
-            "from-amber-400 to-yellow-500 border-yellow-600 shadow-2xl": isCompleted,
-            "from-amber-300 to-yellow-400 border-yellow-500 shadow-xl animate-pulse": isAvailable,
-            "from-gray-300 to-gray-400 border-gray-500 opacity-60": isLocked,
-          }
+          "w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0 z-10 transition-all shadow-lg",
+          isCompleted && "bg-yellow-500 text-white ring-4 ring-yellow-100",
+          isAvailable && !isCompleted && "bg-white border-4 border-yellow-500 text-yellow-600",
+          isLocked && "bg-gray-100 border-4 border-gray-300 text-gray-400"
         )}
-        onClick={isAvailable || isCompleted ? onClick : undefined}
       >
-        {/* Shimmer effect for checkpoints */}
-        {(isCompleted || isAvailable) && (
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
+        <Icon className="w-8 h-8" />
+      </div>
+
+      {/* Content Card */}
+      <div
+        onClick={onClick}
+        className={cn(
+          "flex-1 rounded-xl overflow-hidden cursor-pointer transition-all hover:scale-[1.02] shadow-lg hover:shadow-xl",
+          isLocked && "opacity-60"
         )}
-
-        <div className="relative z-10">
-          {/* Icon */}
-          <div className="flex justify-center mb-4">
-            <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border-4 border-white/40">
-              <Icon className="w-10 h-10 text-white" />
-            </div>
-          </div>
-
+      >
+        <div 
+          className={cn(
+            "bg-gradient-to-br p-6",
+            isCompleted && "from-amber-400 to-yellow-500",
+            isAvailable && !isCompleted && "from-amber-300 to-yellow-400",
+            isLocked && "from-gray-300 to-gray-400"
+          )}
+        >
           {/* Title */}
-          <h3 className="text-2xl font-bold text-white text-center mb-2">
+          <h3 className="text-xl font-bold text-white text-center mb-2">
             {level.titulo}
           </h3>
           <p className="text-white/90 text-center text-sm mb-4">{level.descricao}</p>
@@ -114,7 +118,7 @@ export const TrailCheckpoint = ({ progress, onClick }: TrailCheckpointProps) => 
             <div className="text-center mt-4">
               <span className="inline-block px-4 py-2 bg-white/20 text-white font-medium rounded-full text-sm">
                 🔒 Complete os níveis anteriores
-              </span>
+          </span>
             </div>
           )}
         </div>
