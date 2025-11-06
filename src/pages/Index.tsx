@@ -35,6 +35,15 @@ const Index = () => {
     }
   }, [user, loading, navigate]);
 
+  useEffect(() => {
+    const handleNav = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      setActivePage(customEvent.detail);
+    };
+    window.addEventListener('navigate', handleNav);
+    return () => window.removeEventListener('navigate', handleNav);
+  }, []);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -89,15 +98,6 @@ const Index = () => {
     setActivePage(page);
     setMobileMenuOpen(false);
   };
-
-  useEffect(() => {
-    const handleNav = (e: Event) => {
-      const customEvent = e as CustomEvent;
-      setActivePage(customEvent.detail);
-    };
-    window.addEventListener('navigate', handleNav);
-    return () => window.removeEventListener('navigate', handleNav);
-  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
