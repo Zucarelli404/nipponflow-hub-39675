@@ -174,7 +174,7 @@ const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
   }
 
   return (
-    <aside className="w-64 border-r bg-card shadow-sm">
+    <aside className="w-64 h-[calc(100vh-57px)] lg:h-[calc(100vh-61px)] border-r bg-card shadow-sm">
       <div className="flex flex-col h-full">
         <div className="p-4 border-b">
           <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Menu</h2>

@@ -9,10 +9,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { MessageSquare, LogOut, User, Settings } from "lucide-react";
+import { MessageSquare, LogOut, User, Settings, Menu } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
-const Navbar = () => {
+interface NavbarProps {
+  onMenuClick?: () => void;
+}
+
+const Navbar = ({ onMenuClick }: NavbarProps) => {
   const { user, userRole, signOut } = useAuth();
 
   const getRoleLabel = (role: string | null) => {
@@ -47,8 +51,8 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="border-b bg-card shadow-sm">
-      <div className="container mx-auto px-3 sm:px-4 py-2 sm:py-3">
+    <nav className="sticky top-0 z-50 border-b bg-card shadow-sm">
+      <div className="w-full px-3 sm:px-4 py-2 sm:py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-3">
             <div className="p-1.5 sm:p-2 bg-primary rounded-lg shadow-glow">
@@ -67,12 +71,21 @@ const Navbar = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-2">
             {userRole && (
               <Badge className={`${getRoleColor(userRole)} text-xs hidden sm:inline-flex`}>
                 {getRoleLabel(userRole)}
               </Badge>
             )}
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="lg:hidden h-8 w-8 sm:h-10 sm:w-10"
+              onClick={onMenuClick}
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

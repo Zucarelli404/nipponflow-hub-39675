@@ -102,7 +102,7 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <GamificationNotifications />
-      <Navbar />
+      <Navbar onMenuClick={() => setMobileMenuOpen(true)} />
       <div className="flex flex-1 overflow-hidden">
         {/* Desktop Sidebar */}
         <div className="hidden lg:block">
@@ -111,17 +111,12 @@ const Index = () => {
 
         {/* Mobile Sidebar */}
         <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-          <SheetTrigger asChild className="lg:hidden fixed bottom-4 right-4 z-50 shadow-lg">
-            <Button size="icon" className="h-14 w-14 rounded-full bg-primary text-primary-foreground">
-              <Menu className="h-6 w-6" />
-            </Button>
-          </SheetTrigger>
           <SheetContent side="left" className="p-0 w-64">
             <Sidebar activePage={activePage} onNavigate={handleNavigate} />
           </SheetContent>
         </Sheet>
 
-        <main className="flex-1 p-3 sm:p-4 lg:p-6 overflow-auto">
+        <main className="flex-1 overflow-auto">
           {renderContent()}
         </main>
       </div>
