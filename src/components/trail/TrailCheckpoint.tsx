@@ -79,14 +79,25 @@ export const TrailCheckpoint = ({ progress, onClick }: TrailCheckpointProps) => 
             )}
           </div>
 
-          {/* Unlocks (for distribuidor checkpoint) */}
+          {/* Unlocks for Consultor Avançado */}
+          {level.nivel === 6 && isCompleted && (
+            <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 space-y-2">
+              <p className="text-white font-semibold text-sm mb-2">Parabéns! Você desbloqueou:</p>
+              <ul className="text-white/90 text-xs space-y-1">
+                <li>✓ Acesso a materiais avançados</li>
+                <li>✓ Metas progressivas mais desafiadoras</li>
+              </ul>
+            </div>
+          )}
+
+          {/* Unlocks for Distribuidor checkpoint */}
           {level.nivel === 7 && (
             <div className="bg-white/20 backdrop-blur-sm rounded-lg p-4 space-y-2">
               <p className="text-white font-semibold text-sm mb-2">Desbloqueios:</p>
               <ul className="text-white/90 text-xs space-y-1">
                 <li>✓ Cadastre produtos</li>
                 <li>✓ Cadastre consultores</li>
-                <li>✓ Acesse relatórios avançados</li>
+                <li>✓ Acesse relatórios da rede</li>
               </ul>
             </div>
           )}
