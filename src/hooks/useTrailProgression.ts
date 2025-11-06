@@ -23,6 +23,7 @@ export interface TrailProgress {
   status: "locked" | "available" | "in_progress" | "completed";
   progresso_atual: number;
   completed_at: string | null;
+  created_at: string;
   level: TrailLevel;
 }
 
