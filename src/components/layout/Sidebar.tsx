@@ -176,51 +176,62 @@ const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
   return (
     <aside className="w-64 h-[calc(100vh-57px)] lg:h-[calc(100vh-61px)] border-r bg-card shadow-sm">
       <div className="flex flex-col h-full">
-        <div className="p-4 border-b">
+        <div className="p-4 border-b animate-fade-in">
           <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Menu</h2>
         </div>
 
         <nav className="flex-1 p-2 space-y-2 overflow-y-auto">
-          {visibleGroups.map((group) => (
-            <Collapsible key={group.id} open={openGroups.includes(group.id)} onOpenChange={() => toggleGroup(group.id)}>
-              <CollapsibleTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="w-full justify-between font-semibold text-xs uppercase tracking-wide"
-                >
-                  {group.label}
-                  <ChevronDown
-                    className={cn(
-                      "h-4 w-4 transition-transform",
-                      openGroups.includes(group.id) && "transform rotate-180",
-                    )}
-                  />
-                </Button>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="space-y-1 mt-1">
-                {group.items.map((item) => {
-                  const Icon = item.icon;
-                  return (
-                    <Button
-                      key={item.id}
-                      variant={activePage === item.id ? "secondary" : "ghost"}
+          {visibleGroups.map((group, groupIndex) => (
+            <div
+              key={group.id}
+              className="animate-fade-in"
+              style={{ animationDelay: `${groupIndex * 50}ms` }}
+            >
+              <Collapsible open={openGroups.includes(group.id)} onOpenChange={() => toggleGroup(group.id)}>
+                <CollapsibleTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-between font-semibold text-xs uppercase tracking-wide transition-all duration-200 hover:bg-accent"
+                  >
+                    {group.label}
+                    <ChevronDown
                       className={cn(
-                        "w-full justify-start pl-6",
-                        activePage === item.id && "bg-primary/10 text-primary hover:bg-primary/20",
+                        "h-4 w-4 transition-transform duration-300",
+                        openGroups.includes(group.id) && "transform rotate-180",
                       )}
-                      onClick={() => onNavigate(item.id)}
-                    >
-                      <Icon className="mr-2 h-4 w-4" />
-                      {item.label}
-                    </Button>
-                  );
-                })}
-              </CollapsibleContent>
-            </Collapsible>
+                    />
+                  </Button>
+                </CollapsibleTrigger>
+                <CollapsibleContent className="space-y-1 mt-1">
+                  {group.items.map((item, itemIndex) => {
+                    const Icon = item.icon;
+                    return (
+                      <div
+                        key={item.id}
+                        className="animate-fade-in"
+                        style={{ animationDelay: `${(groupIndex * 50) + (itemIndex * 30)}ms` }}
+                      >
+                        <Button
+                          variant={activePage === item.id ? "secondary" : "ghost"}
+                          className={cn(
+                            "w-full justify-start pl-6 transition-all duration-200",
+                            activePage === item.id && "bg-primary/10 text-primary hover:bg-primary/20",
+                          )}
+                          onClick={() => onNavigate(item.id)}
+                        >
+                          <Icon className="mr-2 h-4 w-4" />
+                          {item.label}
+                        </Button>
+                      </div>
+                    );
+                  })}
+                </CollapsibleContent>
+              </Collapsible>
+            </div>
           ))}
         </nav>
 
-        <div className="p-4 border-t">
+        <div className="p-4 border-t animate-fade-in">
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <MessageSquare className="w-4 h-4" />
             <span>Plataforma Genius BETA</span>
