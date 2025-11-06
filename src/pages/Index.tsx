@@ -16,6 +16,7 @@ import CandidatosView from '@/components/dashboard/CandidatosView';
 import EstoqueView from '@/components/dashboard/EstoqueView';
 import CursosView from '@/components/dashboard/CursosView';
 import GamificacaoView from '@/components/dashboard/GamificacaoView';
+import GraduacaoView from '@/components/dashboard/GraduacaoView';
 import RelatoriosView from '@/components/dashboard/RelatoriosView';
 import AnalyticsView from '@/components/dashboard/AnalyticsView';
 import SettingsView from '@/components/dashboard/SettingsView';
@@ -25,7 +26,7 @@ import { Loader2 } from 'lucide-react';
 const Index = () => {
   const { user, userRole, loading } = useAuth();
   const navigate = useNavigate();
-  const [activePage, setActivePage] = useState('leads');
+  const [activePage, setActivePage] = useState('graduacao');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -51,6 +52,8 @@ const Index = () => {
 
   const renderContent = () => {
     switch (activePage) {
+      case 'graduacao':
+        return <GraduacaoView />;
       case 'inbox':
         return <InboxView />;
       case 'leads':
@@ -78,7 +81,7 @@ const Index = () => {
       case 'configuracoes':
         return userRole === 'admin' ? <SettingsView /> : <LeadsView />;
       default:
-        return <LeadsView />;
+        return <GraduacaoView />;
     }
   };
 
@@ -86,6 +89,15 @@ const Index = () => {
     setActivePage(page);
     setMobileMenuOpen(false);
   };
+
+  useEffect(() => {
+    const handleNav = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      setActivePage(customEvent.detail);
+    };
+    window.addEventListener('navigate', handleNav);
+    return () => window.removeEventListener('navigate', handleNav);
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">

@@ -16,6 +16,7 @@ import {
   Package,
   BookOpen,
   Trophy,
+  Target,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -112,6 +113,14 @@ const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
   };
 
   const menuGroups = [
+    {
+      id: "principal",
+      label: "Principal",
+      roles: ["admin", "gerente", "diretor"],
+      items: [
+        { id: "graduacao", label: "Graduação Infinita", icon: Target },
+      ],
+    },
     {
       id: "clientes",
       label: "Clientes",
