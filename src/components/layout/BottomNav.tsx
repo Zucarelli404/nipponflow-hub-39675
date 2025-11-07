@@ -1,4 +1,4 @@
-import { Calendar, ShoppingBag, BarChart3 } from "lucide-react";
+import { Calendar, ShoppingBag, Home } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface BottomNavProps {
@@ -9,8 +9,8 @@ interface BottomNavProps {
 export const BottomNav = ({ activePage, onNavigate }: BottomNavProps) => {
   const navItems = [
     { id: "agenda-rapida", label: "Agenda", icon: Calendar },
-    { id: "loja-produtos", label: "VENDER", icon: ShoppingBag, isMain: true },
-    { id: "relatorio-vendas", label: "Relatório", icon: BarChart3 },
+    { id: "loja-produtos", label: "V E N D E R", icon: ShoppingBag, isMain: true },
+    { id: "graduacao", label: "Início", icon: Home },
   ];
 
   return (
