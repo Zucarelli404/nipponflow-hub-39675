@@ -36,7 +36,7 @@ export const BottomNav = ({
                       <Icon className="w-7 h-7 text-white" />
                     </div>
                   </div>
-                  <span className="text-xs font-bold text-green-600 mt-16">
+                  <span className="text-xs font-bold text-green-600 mt-12">
                     {item.label}
                   </span>
                 </button>;
