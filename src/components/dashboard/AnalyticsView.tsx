@@ -75,7 +75,7 @@ const AnalyticsView = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 sm:p-6 lg:p-8">
       <div>
         <h2 className="text-2xl font-bold text-foreground">Relatórios</h2>
         <p className="text-muted-foreground">Visão geral do desempenho comercial</p>

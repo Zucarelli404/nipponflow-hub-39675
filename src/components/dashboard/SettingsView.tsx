@@ -11,7 +11,7 @@ import { CoursePermissions } from '@/components/settings/CoursePermissions';
 
 const SettingsView = () => {
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 sm:p-6 lg:p-8">
       <div>
         <h2 className="text-2xl font-bold text-foreground">Configurações</h2>
         <p className="text-muted-foreground">Gerencie integrações e configurações do sistema</p>

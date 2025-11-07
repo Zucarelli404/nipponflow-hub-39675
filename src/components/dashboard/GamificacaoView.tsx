@@ -12,7 +12,7 @@ const GamificacaoView = () => {
   const isAdmin = userRole === "admin" || userRole === "gerente";
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 sm:p-6 lg:p-8">
       <div>
         <h2 className="text-2xl font-bold text-foreground">Gamificação</h2>
         <p className="text-muted-foreground">

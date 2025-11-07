@@ -64,7 +64,7 @@ const RemarketingView = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 sm:p-6 lg:p-8">
       <div>
         <h2 className="text-2xl font-bold text-foreground">Remarketing</h2>
         <p className="text-muted-foreground">Reconquiste clientes e recupere oportunidades</p>
