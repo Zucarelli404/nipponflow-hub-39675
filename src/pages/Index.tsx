@@ -21,6 +21,8 @@ import RelatoriosView from '@/components/dashboard/RelatoriosView';
 import AnalyticsView from '@/components/dashboard/AnalyticsView';
 import SettingsView from '@/components/dashboard/SettingsView';
 import { GamificationNotifications } from '@/components/gamification/GamificationNotifications';
+import { AgendaRapidaView } from '@/components/dashboard/AgendaRapidaView';
+import { ProductStore } from '@/components/store/ProductStore';
 import { Loader2 } from 'lucide-react';
 
 const Index = () => {
@@ -89,6 +91,12 @@ const Index = () => {
         return userRole === 'admin' || userRole === 'diretor' ? <AnalyticsView /> : <LeadsView />;
       case 'configuracoes':
         return userRole === 'admin' ? <SettingsView /> : <LeadsView />;
+      case 'agenda-rapida':
+        return <AgendaRapidaView />;
+      case 'loja-produtos':
+        return <ProductStore />;
+      case 'relatorio-vendas':
+        return <VendasView />;
       default:
         return <GraduacaoView />;
     }
