@@ -93,7 +93,7 @@ export const useTrailProgression = () => {
       case "consultor":
         return "Consultor";
       default:
-        return "Graduado";
+        return "Consultor";
     }
   };
 
