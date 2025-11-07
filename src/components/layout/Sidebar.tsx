@@ -17,7 +17,6 @@ import {
   BookOpen,
   Trophy,
   Target,
-  ShoppingBag,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -231,36 +230,6 @@ const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
             </div>
           ))}
         </nav>
-
-        {/* Footer com 3 botões de ação rápida */}
-        <div className="p-4 border-t bg-card space-y-3 animate-fade-in">
-          <Button
-            variant="outline"
-            className="w-full justify-start transition-all duration-200 hover:scale-105"
-            onClick={() => onNavigate('agenda-rapida')}
-          >
-            <Calendar className="mr-2 h-4 w-4" />
-            Agenda
-          </Button>
-
-          <Button
-            size="lg"
-            className="w-full h-14 rounded-full shadow-lg bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold text-lg transition-all duration-200 hover:scale-105"
-            onClick={() => onNavigate('loja-produtos')}
-          >
-            <ShoppingBag className="mr-2 h-6 w-6" />
-            VENDER
-          </Button>
-
-          <Button
-            variant="outline"
-            className="w-full justify-start transition-all duration-200 hover:scale-105"
-            onClick={() => onNavigate('relatorio-vendas')}
-          >
-            <BarChart3 className="mr-2 h-4 w-4" />
-            Relatório
-          </Button>
-        </div>
       </div>
     </aside>
   );

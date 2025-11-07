@@ -23,6 +23,7 @@ import SettingsView from '@/components/dashboard/SettingsView';
 import { GamificationNotifications } from '@/components/gamification/GamificationNotifications';
 import { AgendaRapidaView } from '@/components/dashboard/AgendaRapidaView';
 import { ProductStore } from '@/components/store/ProductStore';
+import { BottomNav } from '@/components/layout/BottomNav';
 import { Loader2 } from 'lucide-react';
 
 const Index = () => {
@@ -124,10 +125,13 @@ const Index = () => {
           </SheetContent>
         </Sheet>
 
-        <main className="flex-1 overflow-auto">
+        <main className="flex-1 overflow-auto pb-20">
           {renderContent()}
         </main>
       </div>
+
+      {/* Bottom Navigation - Fixo em todas as páginas */}
+      <BottomNav activePage={activePage} onNavigate={setActivePage} />
     </div>
   );
 };
