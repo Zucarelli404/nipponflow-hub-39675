@@ -23,6 +23,7 @@ import SettingsView from '@/components/dashboard/SettingsView';
 import { GamificationNotifications } from '@/components/gamification/GamificationNotifications';
 import { AgendaRapidaView } from '@/components/dashboard/AgendaRapidaView';
 import { ProductStore } from '@/components/store/ProductStore';
+import { ProductRequestHistory } from '@/components/store/ProductRequestHistory';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { Loader2 } from 'lucide-react';
 
@@ -96,6 +97,8 @@ const Index = () => {
         return <AgendaRapidaView />;
       case 'loja-produtos':
         return <ProductStore />;
+      case 'historico-produtos':
+        return <ProductRequestHistory />;
       case 'relatorio-vendas':
         return <VendasView />;
       default:
