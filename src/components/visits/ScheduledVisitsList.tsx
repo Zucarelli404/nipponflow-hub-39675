@@ -77,13 +77,13 @@ const ScheduledVisitsList = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'agendada':
-        return 'bg-blue-500';
+        return 'bg-primary/10 text-primary border-primary';
       case 'realizada':
-        return 'bg-green-500';
+        return 'bg-green-500/10 text-green-600 border-green-600';
       case 'cancelada':
-        return 'bg-red-500';
+        return 'bg-red-500/10 text-red-600 border-red-600';
       default:
-        return 'bg-gray-500';
+        return 'bg-muted text-muted-foreground';
     }
   };
 
@@ -118,81 +118,83 @@ const ScheduledVisitsList = () => {
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Cliente</TableHead>
-          <TableHead>Especialista</TableHead>
-          <TableHead>Data Agendada</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Ações</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {visits.map((visit) => (
-          <TableRow key={visit.id}>
-            <TableCell>
-              <div>
-                <div className="font-medium">{(visit as any).lead?.nome}</div>
-                <div className="text-xs text-muted-foreground flex items-center gap-1">
-                  <Phone className="h-3 w-3" />
-                  {(visit as any).lead?.telefone}
-                </div>
-              </div>
-            </TableCell>
-            <TableCell>
-              <div className="flex items-center gap-1">
-                <User className="h-3 w-3 text-muted-foreground" />
-                {(visit as any).especialista?.nome}
-              </div>
-            </TableCell>
-            <TableCell>
-              <div>
-                <div className="font-medium">
-                  {new Date(visit.data_visita).toLocaleDateString('pt-BR')}
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {new Date(visit.data_visita).toLocaleTimeString('pt-BR', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}{' '}
-                  -{' '}
-                  {formatDistanceToNow(new Date(visit.data_visita), {
-                    addSuffix: true,
-                    locale: ptBR,
-                  })}
-                </div>
-              </div>
-            </TableCell>
-            <TableCell>
-              <Badge className={`${getStatusColor(visit.status)} text-white`}>
-                {getStatusLabel(visit.status)}
-              </Badge>
-            </TableCell>
-            <TableCell>
-              {visit.status === 'agendada' && (
-                <div className="flex gap-1">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleUpdateStatus(visit.id, 'realizada')}
-                  >
-                    <Check className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => handleUpdateStatus(visit.id, 'cancelada')}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              )}
-            </TableCell>
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="hidden sm:table-cell">Cliente</TableHead>
+            <TableHead className="hidden md:table-cell">Especialista</TableHead>
+            <TableHead>Data</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="text-right">Ações</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {visits.map((visit) => (
+            <TableRow key={visit.id}>
+              <TableCell className="hidden sm:table-cell">
+                <div>
+                  <div className="font-medium">{(visit as any).lead?.nome}</div>
+                  <div className="text-xs text-muted-foreground flex items-center gap-1">
+                    <Phone className="h-3 w-3" />
+                    {(visit as any).lead?.telefone}
+                  </div>
+                </div>
+              </TableCell>
+              <TableCell className="hidden md:table-cell">
+                <div className="flex items-center gap-1">
+                  <User className="h-3 w-3 text-muted-foreground" />
+                  {(visit as any).especialista?.nome}
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="sm:hidden font-medium mb-1">
+                  {(visit as any).lead?.nome}
+                </div>
+                <div>
+                  <div className="font-medium text-sm">
+                    {new Date(visit.data_visita).toLocaleDateString('pt-BR')}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {new Date(visit.data_visita).toLocaleTimeString('pt-BR', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </div>
+                </div>
+              </TableCell>
+              <TableCell>
+                <Badge variant="outline" className={`${getStatusColor(visit.status)} text-xs`}>
+                  {getStatusLabel(visit.status)}
+                </Badge>
+              </TableCell>
+              <TableCell className="text-right">
+                {visit.status === 'agendada' && (
+                  <div className="flex gap-1 justify-end">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleUpdateStatus(visit.id, 'realizada')}
+                      title="Marcar como realizada"
+                    >
+                      <Check className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => handleUpdateStatus(visit.id, 'cancelada')}
+                      title="Cancelar visita"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                )}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 };
 
