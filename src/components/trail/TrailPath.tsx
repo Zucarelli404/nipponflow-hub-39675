@@ -9,11 +9,11 @@ interface TrailPathProps {
 
 export const TrailPath = ({ trailProgress, onLevelClick }: TrailPathProps) => {
   return (
-    <div className="min-h-screen bg-white py-8">
+    <div className="min-h-screen bg-background py-8">
       <div className="container mx-auto px-4 max-w-3xl">
         <div className="relative">
           {/* Vertical Connection Line */}
-          <div className="absolute left-8 top-0 bottom-0 w-1 bg-gradient-to-b from-green-500 via-green-400 to-green-300" />
+          <div className="absolute left-8 top-0 bottom-0 w-1 bg-border" />
 
           {/* Trail Levels */}
           <div className="space-y-8 relative">

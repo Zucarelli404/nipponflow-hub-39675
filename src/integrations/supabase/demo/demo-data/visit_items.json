@@ -1,0 +1,13 @@
+{
+  "meta": { "source": "DADOS DEMO", "generated_at": "2025-11-12T00:00:00.000Z" },
+  "data": [
+    { "id": "item-1", "visit_report_id": "visit-2", "descricao": "Kit Nippon", "quantidade": 2, "valor_unitario": 250 },
+    { "id": "item-2", "visit_report_id": "visit-2", "descricao": "Assinatura Revista", "quantidade": 1, "valor_unitario": 750 },
+    { "id": "item-3", "visit_report_id": "visit-3", "descricao": "Kit Iniciante", "quantidade": 1, "valor_unitario": 800 },
+    { "id": "item-4", "visit_report_id": "visit-4", "descricao": "Assinatura Básica", "quantidade": 1, "valor_unitario": 600 },
+    { "id": "item-5", "visit_report_id": "visit-5", "descricao": "Combo Apresentação", "quantidade": 3, "valor_unitario": 500 },
+    { "id": "item-6", "visit_report_id": "visit-6", "descricao": "Material Didático", "quantidade": 2, "valor_unitario": 200 },
+    { "id": "item-7", "visit_report_id": "visit-7", "descricao": "Kit Pro", "quantidade": 1, "valor_unitario": 980 },
+    { "id": "item-8", "visit_report_id": "visit-8", "descricao": "Plano Mensal", "quantidade": 1, "valor_unitario": 560 }
+  ]
+}

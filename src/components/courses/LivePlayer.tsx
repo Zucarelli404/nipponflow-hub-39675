@@ -41,8 +41,9 @@ const LivePlayer = ({ courseId, titulo, descricao, dataLive, streamUrl, onClose 
             <Radio className="h-5 w-5" />
             {titulo}
             {isLive && (
-              <Badge className="bg-destructive text-destructive-foreground animate-pulse">
-                AO VIVO
+              <Badge className="bg-destructive text-destructive-foreground animate-pulse min-w-[44px] px-2 py-1 leading-tight text-[10px] flex flex-col items-center">
+                <span>AO</span>
+                <span>VIVO</span>
               </Badge>
             )}
           </DialogTitle>

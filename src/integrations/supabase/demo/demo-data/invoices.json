@@ -1,0 +1,10 @@
+{
+  "meta": { "source": "DADOS DEMO", "generated_at": "2025-11-12T00:00:00.000Z" },
+  "data": [
+    { "id": "inv-1", "user_id": "demo-user-id", "valor": 450.0, "status": "pendente", "due_date": "2025-11-15T10:00:00.000Z", "descricao": "Boleto venda PIX ajuste" },
+    { "id": "inv-2", "user_id": "demo-user-id", "valor": 300.0, "status": "pago", "due_date": "2025-10-30T10:00:00.000Z", "descricao": "Mensalidade plataforma" },
+    { "id": "inv-3", "user_id": "demo-user-id", "valor": 200.0, "status": "pendente", "due_date": "2025-11-19T10:00:00.000Z", "descricao": "Assinatura cliente" },
+    { "id": "inv-4", "user_id": "demo-user-id", "valor": 560.0, "status": "pendente", "due_date": "2025-11-19T10:00:00.000Z", "descricao": "Boleto venda visit-8" },
+    { "id": "inv-5", "user_id": "demo-user-id", "valor": 980.0, "status": "pago", "due_date": "2025-11-10T10:00:00.000Z", "descricao": "Cartão compensado venda visit-7" }
+  ]
+}

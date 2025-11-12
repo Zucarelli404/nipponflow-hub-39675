@@ -50,27 +50,30 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 5%;
+    /* Light theme (white version) */
+    --background: 0 0% 100%; /* #FFFFFF */
+    --foreground: 0 0% 10%; /* near-black for text */
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 5%;
+    --card: 0 0% 100%; /* white cards */
+    --card-foreground: var(--foreground);
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 5%;
+    --popover-foreground: var(--foreground);
 
-    --primary: 0 0% 10%;
-    --primary-foreground: 0 0% 98%;
-    --primary-hover: 0 0% 20%;
+    /* Primary remains gold for CTAs */
+    --primary: 38 92% 55%; /* #F5A623 */
+    --primary-foreground: 0 0% 5%;
+    --primary-hover: 39 100% 60%; /* #FFB733 */
 
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 10%;
+    /* Neutral tones for UI */
+    --secondary: 0 0% 96%; /* light gray blocks */
+    --secondary-foreground: 0 0% 20%;
 
     --muted: 0 0% 96%;
-    --muted-foreground: 0 0% 45%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 0 0% 96%;
-    --accent-foreground: 0 0% 10%;
+    --accent: 0 0% 98%;
+    --accent-foreground: 0 0% 20%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
@@ -78,60 +81,62 @@ All colors MUST be HSL.
     --success: 142 76% 36%;
     --success-foreground: 0 0% 98%;
 
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 10%;
+    --warning: 38 92% 55%;
+    --warning-foreground: 0 0% 5%;
 
-    --border: 0 0% 90%;
+    --border: 0 0% 90%; /* light border */
     --input: 0 0% 90%;
-    --ring: 0 0% 20%;
+    --ring: var(--primary);
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 0 0% 10%;
-    --sidebar-primary: 0 0% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 0 0% 96%;
-    --sidebar-accent-foreground: 0 0% 10%;
-    --sidebar-border: 0 0% 90%;
-    --sidebar-ring: 0 0% 20%;
+    /* Sidebar palette for light theme */
+    --sidebar-background: 0 0% 98%; /* subtle separation */
+    --sidebar-foreground: var(--foreground);
+    --sidebar-primary: var(--primary);
+    --sidebar-primary-foreground: var(--primary-foreground);
+    --sidebar-accent: 0 0% 100%;
+    --sidebar-accent-foreground: var(--foreground);
+    --sidebar-border: var(--border);
+    --sidebar-ring: var(--ring);
 
-    --gradient-primary: linear-gradient(135deg, hsl(0 0% 10%), hsl(0 0% 20%));
-    --gradient-gold: linear-gradient(135deg, hsl(0 0% 15%), hsl(0 0% 25%));
+    --gradient-primary: linear-gradient(135deg, hsl(0 0% 100%), hsl(0 0% 98%));
+    --gradient-gold: linear-gradient(135deg, hsl(38 92% 65%), hsl(38 92% 55%));
     
-    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
-    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.1);
-    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.15);
+    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.08);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.12);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.16);
     --shadow-xl: 0 20px 25px -5px hsl(0 0% 0% / 0.2);
-    --shadow-glow: 0 0 20px hsl(0 0% 0% / 0.1);
-    --shadow-glow-lg: 0 0 30px hsl(0 0% 0% / 0.15);
+    --shadow-glow: 0 0 20px hsl(38 92% 55% / 0.15);
+    --shadow-glow-lg: 0 0 30px hsl(38 92% 55% / 0.25);
 
     --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     --transition-smooth: all 0.3s ease;
   }
 
   .dark {
-    --background: 0 0% 5%;
-    --foreground: 0 0% 98%;
+    /* Keep dark variant slightly brighter if used */
+    --background: 0 0% 6%;
+    --foreground: 0 0% 100%;
 
-    --card: 0 0% 8%;
-    --card-foreground: 0 0% 98%;
+    --card: 0 0% 9%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 0 0% 8%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 10%;
-    --primary-hover: 0 0% 90%;
+    --primary: 38 92% 55%;
+    --primary-foreground: 0 0% 5%;
+    --primary-hover: 39 100% 60%;
 
-    --secondary: 0 0% 12%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 0 0% 54%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 60%;
+    --muted-foreground: 0 0% 54%;
 
-    --accent: 0 0% 12%;
-    --accent-foreground: 0 0% 98%;
+    --accent: 0 0% 10%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
@@ -139,21 +144,21 @@ All colors MUST be HSL.
     --success: 142 76% 36%;
     --success-foreground: 0 0% 98%;
 
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 10%;
+    --warning: 38 92% 55%;
+    --warning-foreground: 0 0% 5%;
 
-    --border: 0 0% 15%;
-    --input: 0 0% 15%;
-    --ring: 0 0% 80%;
+    --border: 0 0% 14%;
+    --input: 0 0% 14%;
+    --ring: 38 92% 55%;
 
     --sidebar-background: 0 0% 6%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 0 0% 98%;
-    --sidebar-primary-foreground: 0 0% 10%;
-    --sidebar-accent: 0 0% 10%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 0 0% 15%;
-    --sidebar-ring: 0 0% 80%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 38 92% 55%;
+    --sidebar-primary-foreground: 0 0% 5%;
+    --sidebar-accent: 0 0% 9%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 14%;
+    --sidebar-ring: 38 92% 55%;
   }
 }
 
@@ -166,3 +171,17 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* Utility overrides to fit dark gold theme for legacy classes */
+.bg-white { background-color: hsl(var(--card)) !important; }
+.text-gray-900 { color: hsl(var(--foreground)) !important; }
+.text-gray-800 { color: hsl(var(--foreground)) !important; }
+.text-gray-700 { color: hsl(var(--muted-foreground)) !important; }
+.text-gray-600 { color: hsl(var(--muted-foreground)) !important; }
+.border-gray-200 { border-color: hsl(var(--border)) !important; }
+.border-gray-100 { border-color: hsl(var(--border)) !important; }
+.bg-gray-50, .bg-gray-100 { background-color: hsl(var(--card)) !important; }
+.shadow-glow { box-shadow: 0 0 20px hsl(var(--primary) / 0.3); }
+.shadow-glow-lg { box-shadow: 0 0 30px hsl(var(--primary) / 0.5); }
+
+/* (Removed Bahia gradient utility) */

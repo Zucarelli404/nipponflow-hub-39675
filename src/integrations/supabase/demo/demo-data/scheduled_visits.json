@@ -1,0 +1,7 @@
+{
+  "meta": { "source": "DADOS DEMO", "generated_at": "2025-11-12T00:00:00.000Z" },
+  "data": [
+    { "id": "sched-1", "lead_id": "lead-1", "data_visita": "2025-11-13T14:00:00.000Z", "especialista_id": "profile-2", "status": "agendada", "observacoes": "Visita de avaliação" },
+    { "id": "sched-2", "lead_id": "lead-4", "data_visita": "2025-11-14T16:00:00.000Z", "especialista_id": "profile-1", "status": "agendada", "observacoes": "Tentativa de reconquista" }
+  ]
+}

@@ -3,6 +3,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp, TrendingDown, Users, DollarSign, Calendar, Target, CheckCircle2, XCircle } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
+import { motion } from 'framer-motion';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
 
 interface ConversionMetrics {
   totalLeads: number;
@@ -264,6 +267,57 @@ const LeadAnalytics = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Astral FX: Gráficos de Origem */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+          <Card>
+            <CardHeader>
+              <CardTitle>Leads por origem</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {Object.keys(metrics.leadsPorOrigem).length === 0 ? (
+                <div className="text-sm text-muted-foreground text-center py-6">Sem dados suficientes</div>
+              ) : (
+                <ChartContainer variant="astral" config={{ total: { label: 'Total', color: 'hsl(var(--primary))' } }}>
+                  <BarChart data={Object.entries(metrics.leadsPorOrigem).map(([origem, total]) => ({ origem, total }))}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="origem" tickFormatter={(v) => String(v).slice(0, 8)} />
+                    <YAxis />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <ChartLegend content={<ChartLegendContent />} />
+                    <Bar dataKey="total" fill="hsl(var(--primary))" radius={[4,4,0,0]} />
+                  </BarChart>
+                </ChartContainer>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, delay: 0.05 }}>
+          <Card>
+            <CardHeader>
+              <CardTitle>Conversão por origem</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {Object.keys(metrics.conversaoPorOrigem).length === 0 ? (
+                <div className="text-sm text-muted-foreground text-center py-6">Sem dados suficientes</div>
+              ) : (
+                <ChartContainer variant="astral" config={{ taxa: { label: 'Conversão %', color: 'hsl(var(--success))' } }}>
+                  <BarChart data={Object.entries(metrics.conversaoPorOrigem).map(([origem, d]) => ({ origem, taxa: Number(d.taxa.toFixed(1)) }))}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="origem" tickFormatter={(v) => String(v).slice(0, 8)} />
+                    <YAxis domain={[0, 100]} />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <ChartLegend content={<ChartLegendContent />} />
+                    <Bar dataKey="taxa" fill="hsl(var(--success))" radius={[4,4,0,0]} />
+                  </BarChart>
+                </ChartContainer>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
     </div>
   );
 };

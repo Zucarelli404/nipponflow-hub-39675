@@ -120,6 +120,28 @@ const ScheduleVisitForm = ({ onSuccess }: ScheduleVisitFormProps) => {
 
       if (error) throw error;
 
+      // Notificação de evento (visita agendada)
+      const leadNome = leads.find(l => l.id === validatedData.leadId)?.nome || undefined;
+      await (supabase as any)
+        .from('event_notifications')
+        .insert({
+          id: `evt-${Date.now()}`,
+          user_id: user.id,
+          type: 'visit',
+          entity_id: validatedData.leadId,
+          message: `Visita agendada${leadNome ? ` para ${leadNome}` : ''}`,
+          created_at: new Date().toISOString(),
+          read: false,
+          metadata: {
+            lead_id: validatedData.leadId,
+            lead_nome: leadNome,
+            data: validatedData.dataAgendada,
+          },
+        });
+
+      // Dispara atualização local (DEMO)
+      window.dispatchEvent(new CustomEvent('event-notifications-updated'));
+
       // Lead updated automatically via visit creation
 
       toast.success('Visita agendada com sucesso');

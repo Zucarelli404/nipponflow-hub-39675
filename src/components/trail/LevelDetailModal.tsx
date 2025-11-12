@@ -15,6 +15,9 @@ import { useNavigate } from "react-router-dom";
 import { CheckCircle2, Clock, Lightbulb, Target, TrendingUp } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 interface LevelDetailModalProps {
   progress: TrailProgress | null;
@@ -34,6 +37,27 @@ export const LevelDetailModal = ({ progress, open, onOpenChange }: LevelDetailMo
   const progressPercent = level.requisito_quantidade > 0 
     ? (progresso_atual / level.requisito_quantidade) * 100 
     : 0;
+
+  // Metas relacionadas ao requisito para avançar
+  const [relatedGoals, setRelatedGoals] = useState<any[]>([]);
+  const [loadingGoals, setLoadingGoals] = useState(false);
+
+  useEffect(() => {
+    if (!open) return;
+    setLoadingGoals(true);
+    const categoria = level?.requisito_tipo;
+    supabase
+      .from("goals" as any)
+      .select("*")
+      .or("tipo.eq.individual,tipo.eq.geral")
+      .eq("status", "ativa")
+      .then(({ data }) => {
+        const list = (data as any[]) || [];
+        const filtered = categoria ? list.filter((g) => g.categoria === categoria) : list;
+        setRelatedGoals(filtered);
+      })
+      .finally(() => setLoadingGoals(false));
+  }, [open, level?.requisito_tipo]);
 
   // Tips based on level type
   const getLevelTips = () => {
@@ -262,7 +286,7 @@ export const LevelDetailModal = ({ progress, open, onOpenChange }: LevelDetailMo
         </DialogHeader>
 
         <Tabs defaultValue="overview" className="mt-6">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="overview">
               <Target className="w-4 h-4 mr-1" />
               Visão Geral
@@ -278,6 +302,10 @@ export const LevelDetailModal = ({ progress, open, onOpenChange }: LevelDetailMo
             <TabsTrigger value="tips">
               <Lightbulb className="w-4 h-4 mr-1" />
               Dicas
+            </TabsTrigger>
+            <TabsTrigger value="goals">
+              <Target className="w-4 h-4 mr-1" />
+              Metas para Avanço
             </TabsTrigger>
           </TabsList>
 
@@ -442,6 +470,57 @@ export const LevelDetailModal = ({ progress, open, onOpenChange }: LevelDetailMo
                 💪 Mantenha a consistência e você chegará lá!
               </p>
             </div>
+          </TabsContent>
+
+          {/* Goals Tab */}
+          <TabsContent value="goals" className="space-y-4 mt-4">
+            <div>
+              <h3 className="font-semibold text-gray-900">Metas que aceleram o avanço</h3>
+              <p className="text-sm text-muted-foreground">
+                Complete estas metas para avançar ao próximo nível e cargo
+              </p>
+            </div>
+
+            {loadingGoals ? (
+              <div className="text-sm text-muted-foreground">Carregando metas...</div>
+            ) : relatedGoals.length === 0 ? (
+              <div className="text-sm text-muted-foreground">Nenhuma meta relacionada ativa no momento.</div>
+            ) : (
+              <div className="grid gap-4 md:grid-cols-2">
+                {relatedGoals.map((goal) => {
+                  const pct = goal.meta_valor > 0 ? Math.min(100, (goal.valor_atual / goal.meta_valor) * 100) : 0;
+                  const isCompletedGoal = pct >= 100;
+                  return (
+                    <Card key={goal.id} className={isCompletedGoal ? "border-green-500" : ""}>
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <CardTitle className="text-base">{goal.titulo}</CardTitle>
+                            <CardDescription className="mt-1">{goal.descricao}</CardDescription>
+                          </div>
+                          <Badge variant="outline" className="ml-2 text-xs">
+                            {goal.tipo === "geral" ? "Geral" : "Individual"}
+                          </Badge>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <div className="flex justify-between text-xs">
+                          <span className="text-muted-foreground">Progresso</span>
+                          <span className="font-medium">
+                            {goal.valor_atual} / {goal.meta_valor} {goal.unidade}
+                          </span>
+                        </div>
+                        <Progress value={pct} className="h-2" />
+                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                          <span>{pct.toFixed(0)}% completo</span>
+                          <span className="font-medium">+{goal.pontos_recompensa} pontos</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
           </TabsContent>
         </Tabs>
       </DialogContent>

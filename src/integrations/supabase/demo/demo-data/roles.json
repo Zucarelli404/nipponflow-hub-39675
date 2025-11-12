@@ -1,0 +1,9 @@
+{
+  "meta": { "source": "DADOS DEMO", "generated_at": "2025-11-12T00:00:00.000Z" },
+  "data": [
+    { "id": "role-admin", "nome": "Admin", "descricao": "Administrador do sistema (DADOS DEMO)", "is_system": true },
+    { "id": "role-diretor", "nome": "Diretor", "descricao": "Líder de equipe (DADOS DEMO)", "is_system": false },
+    { "id": "role-gerente", "nome": "Gerente", "descricao": "Gestão operacional (DADOS DEMO)", "is_system": false },
+    { "id": "role-especialista", "nome": "Especialista", "descricao": "Consultor de campo (DADOS DEMO)", "is_system": false }
+  ]
+}

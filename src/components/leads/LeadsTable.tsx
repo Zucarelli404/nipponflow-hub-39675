@@ -30,6 +30,10 @@ import { Download, Search, Filter, Edit, Trash2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { motion } from 'framer-motion';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, PieChart, Pie, Cell } from 'recharts';
 
 interface Lead {
   id: string;
@@ -252,6 +256,18 @@ const LeadsTable = () => {
   const canEdit = userRole === 'admin' || userRole === 'gerente' || userRole === 'diretor';
   const canDelete = userRole === 'admin';
 
+  const statusDist = ['novo','em_atendimento','fechado','perdido'].map((s) => ({
+    status: s,
+    total: filteredLeads.filter((l) => l.status === s).length,
+  }));
+  const origemDist = Object.entries(
+    filteredLeads.reduce((acc: Record<string, number>, l) => {
+      const o = l.origem || 'desconhecido';
+      acc[o] = (acc[o] || 0) + 1;
+      return acc;
+    }, {})
+  ).map(([origem, total]) => ({ origem, total }));
+
   return (
     <>
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
@@ -309,6 +325,58 @@ const LeadsTable = () => {
             Exportar CSV
           </Button>
         )}
+      </div>
+
+      {/* Astral FX: Resumo visual dos leads */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+          <Card>
+            <CardHeader>
+              <CardTitle>Leads por status</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {filteredLeads.length === 0 ? (
+                <div className="text-sm text-muted-foreground text-center py-6">Sem dados</div>
+              ) : (
+                <ChartContainer variant="astral" config={{ total: { label: 'Total', color: 'hsl(var(--primary))' } }}>
+                  <BarChart data={statusDist}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="status" tickFormatter={(v) => getStatusLabel(v)} />
+                    <YAxis />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <ChartLegend content={<ChartLegendContent />} />
+                    <Bar dataKey="total" fill="hsl(var(--primary))" radius={[4,4,0,0]} />
+                  </BarChart>
+                </ChartContainer>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, delay: 0.05 }}>
+          <Card>
+            <CardHeader>
+              <CardTitle>Leads por origem</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {origemDist.length === 0 ? (
+                <div className="text-sm text-muted-foreground text-center py-6">Sem dados</div>
+              ) : (
+                <ChartContainer variant="astral" config={{ total: { label: 'Total', color: 'hsl(var(--success))' } }}>
+                  <PieChart>
+                    <Pie data={origemDist} dataKey="total" nameKey="origem" outerRadius={100}>
+                      {origemDist.map((_, idx) => (
+                        <Cell key={`cell-${idx}`} fill={["hsl(var(--success))","hsl(var(--primary))","hsl(var(--accent))","hsl(var(--warning))"][idx % 4]} />
+                      ))}
+                    </Pie>
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <ChartLegend content={<ChartLegendContent />} />
+                  </PieChart>
+                </ChartContainer>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
       </div>
 
       <div className="rounded-lg border">

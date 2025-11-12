@@ -133,6 +133,28 @@ const AutoSuggestVisits = () => {
 
       if (error) throw error;
 
+      // Notificação de evento (visita agendada automaticamente)
+      const leadNome = selectedLead?.nome;
+      await (supabase as any)
+        .from('event_notifications')
+        .insert({
+          id: `evt-${Date.now()}`,
+          user_id: user.id,
+          type: 'visit',
+          entity_id: selectedLead.id,
+          message: `Visita agendada${leadNome ? ` para ${leadNome}` : ''}`,
+          created_at: new Date().toISOString(),
+          read: false,
+          metadata: {
+            lead_id: selectedLead.id,
+            lead_nome: leadNome,
+            data: dataAgendada,
+          },
+        });
+
+      // Dispara atualização local (DEMO)
+      window.dispatchEvent(new CustomEvent('event-notifications-updated'));
+
       toast.success('Visita agendada automaticamente');
       setSelectedLead(null);
       setEspecialistaId('');

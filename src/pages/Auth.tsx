@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, MessageSquare } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -44,10 +45,11 @@ const Auth = () => {
     const { error } = await signIn(loginEmail, loginPassword);
 
     if (error) {
+      const isInvalidCreds = error.message === 'Invalid login credentials' || /invalid login/i.test(error.message);
       toast({
         title: 'Erro ao fazer login',
-        description: error.message === 'Invalid login credentials'
-          ? 'Email ou senha incorretos.'
+        description: isInvalidCreds
+          ? 'Email ou senha incorretos. Verifique os dados ou use “Esqueci minha senha”.'
           : error.message,
         variant: 'destructive',
       });
@@ -60,6 +62,37 @@ const Auth = () => {
     }
 
     setIsLoading(false);
+  };
+
+  const handleResetPassword = async () => {
+    if (!loginEmail) {
+      toast({
+        title: 'Informe seu email',
+        description: 'Digite seu email no campo acima para recuperar a senha.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const { error } = await supabase.auth.resetPasswordForEmail(loginEmail, {
+        redirectTo: `${window.location.origin}/auth`,
+      });
+      if (error) throw error;
+      toast({
+        title: 'Link de recuperação enviado',
+        description: 'Verifique seu email e siga as instruções para redefinir sua senha.',
+      });
+    } catch (error: any) {
+      toast({
+        title: 'Erro ao enviar recuperação',
+        description: error?.message || 'Não foi possível enviar o link de recuperação.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSignup = async (e: React.FormEvent) => {
@@ -214,6 +247,15 @@ const Auth = () => {
                   'Entrar'
                 )}
               </Button>
+              <button
+                type="button"
+                onClick={handleResetPassword}
+                disabled={isLoading}
+                className="text-xs underline"
+                style={{ color: '#ffa500' }}
+              >
+                Esqueci minha senha
+              </button>
             </form>
           </TabsContent>
 

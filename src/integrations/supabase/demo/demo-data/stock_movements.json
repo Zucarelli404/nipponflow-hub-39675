@@ -1,0 +1,9 @@
+{
+  "meta": { "source": "DADOS DEMO", "generated_at": "2025-11-12T00:00:00.000Z" },
+  "data": [
+    { "id": "sm-1", "product_id": "prod-abc", "tipo": "entrada", "quantidade": 10, "created_at": "2025-11-01T10:00:00.000Z" },
+    { "id": "sm-2", "product_id": "prod-abc", "tipo": "saida", "quantidade": 3, "created_at": "2025-11-05T12:00:00.000Z" },
+    { "id": "sm-3", "product_id": "prod-rev", "tipo": "entrada", "quantidade": 20, "created_at": "2025-11-03T09:00:00.000Z" },
+    { "id": "sm-4", "product_id": "prod-rev", "tipo": "saida", "quantidade": 5, "created_at": "2025-11-07T14:00:00.000Z" }
+  ]
+}

@@ -24,7 +24,7 @@ export const BottomNav = ({ activePage, onNavigate }: BottomNavProps) => {
     },
   ];
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-card border-t shadow-lg z-50 pb-safe">
+    <div className="fixed bottom-0 left-0 right-0 bg-card border-t shadow-lg z-50 pb-safe lg:hidden">
       <div className="container mx-auto px-4 max-w-screen-xl">
         <div className="grid grid-cols-3 gap-2 py-3">
           {navItems.map((item) => {

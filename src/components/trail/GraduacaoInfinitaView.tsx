@@ -90,7 +90,26 @@ const GraduacaoInfinitaView = () => {
   }
 
   return (
-    <div className="min-h-screen pb-20 bg-white">
+    <div className="min-h-screen pb-20 bg-background">
+      {/* Toggle Trilha/Ranking */}
+      <div className="container mx-auto px-4 pt-4 sm:pt-6">
+        <div className="flex justify-end mb-4">
+          <div className="inline-flex rounded-lg border bg-card">
+            <button
+              className="px-3 py-1.5 text-sm font-semibold bg-primary text-primary-foreground rounded-l-lg"
+              onClick={() => handleNavigate("graduacao")}
+            >
+              Trilha
+            </button>
+            <button
+              className="px-3 py-1.5 text-sm rounded-r-lg hover:bg-accent"
+              onClick={() => handleNavigate("graduacao-ranking")}
+            >
+              Ranking
+            </button>
+          </div>
+        </div>
+      </div>
       <TrailHeader 
         userProgression={userProgression}
         checkpointLabel={getCheckpointLabel(userProgression?.current_checkpoint || "graduado")}

@@ -25,9 +25,9 @@ export const TrailLevel = ({ progress, onClick }: TrailLevelProps) => {
       <div
         className={cn(
           "w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0 z-10 transition-all shadow-md",
-          isCompleted && "bg-green-500 text-white ring-4 ring-green-100",
-          isAvailable && !isCompleted && "bg-white border-4 border-green-500 text-green-600",
-          isLocked && "bg-gray-100 border-4 border-gray-300 text-gray-400"
+          isCompleted && "bg-primary text-primary-foreground ring-4 ring-primary/20",
+          isAvailable && !isCompleted && "bg-card border-4 border-primary text-primary",
+          isLocked && "bg-muted border-4 border-border text-muted-foreground"
         )}
       >
         {isCompleted && <Check className="w-8 h-8" />}
@@ -40,19 +40,19 @@ export const TrailLevel = ({ progress, onClick }: TrailLevelProps) => {
         onClick={onClick}
         className={cn(
           "flex-1 rounded-xl p-4 cursor-pointer transition-all hover:scale-[1.02] shadow-sm hover:shadow-md",
-          isCompleted && "bg-green-50 border-2 border-green-200",
-          isAvailable && !isCompleted && "bg-white border-2 border-green-400 hover:border-green-500",
-          isLocked && "bg-gray-50 border-2 border-gray-200 opacity-60"
+          isCompleted && "bg-card border-2 border-primary",
+          isAvailable && !isCompleted && "bg-card border-2 border-border hover:border-primary",
+          isLocked && "bg-muted border-2 border-border opacity-60"
         )}
       >
         <div className="space-y-2">
-          <h3 className="font-bold text-base text-gray-900">{level.titulo}</h3>
-          <p className="text-sm text-gray-600">{level.descricao}</p>
+          <h3 className="font-bold text-base text-foreground">{level.titulo}</h3>
+          <p className="text-sm text-muted-foreground">{level.descricao}</p>
 
           {/* Progress Bar */}
           {hasProgress && !isCompleted && (
             <div className="space-y-1">
-              <div className="flex justify-between text-xs text-gray-600">
+              <div className="flex justify-between text-xs text-muted-foreground">
                 <span>Progresso</span>
                 <span className="font-semibold">
                   {progresso_atual} / {level.requisito_quantidade}
@@ -69,28 +69,28 @@ export const TrailLevel = ({ progress, onClick }: TrailLevelProps) => {
           {(level.recompensa_xp > 0 || level.recompensa_diamantes > 0) && (
             <div className="flex gap-3 text-xs">
               {level.recompensa_xp > 0 && (
-                <span className="text-amber-600 font-bold">+{level.recompensa_xp} XP</span>
+                <span className="text-primary font-bold">+{level.recompensa_xp} XP</span>
               )}
               {level.recompensa_diamantes > 0 && (
-                <span className="text-cyan-600 font-bold">+{level.recompensa_diamantes} 💎</span>
+                <span className="text-primary font-bold">+{level.recompensa_diamantes} 💎</span>
               )}
             </div>
           )}
 
           {/* Status Badge or Action */}
           {isCompleted && (
-            <span className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full">
+            <span className="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary text-xs font-bold rounded-full">
               <Check className="w-3 h-3" />
               COMPLETO
             </span>
           )}
           {isAvailable && !isCompleted && (
-            <button className="w-full mt-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white text-sm font-bold rounded-lg transition-colors">
+            <button className="w-full mt-2 px-4 py-2 bg-primary hover:bg-primary text-primary-foreground text-sm font-bold rounded-lg transition-colors">
               INICIAR
             </button>
           )}
           {isLocked && (
-            <span className="inline-block px-3 py-1 bg-gray-100 text-gray-600 text-xs font-medium rounded-full">
+            <span className="inline-block px-3 py-1 bg-muted text-muted-foreground text-xs font-medium rounded-full">
               🔒 Bloqueado
             </span>
           )}

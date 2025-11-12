@@ -3,6 +3,25 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3, TrendingUp, Users as UsersIcon, CheckCircle2, XCircle } from 'lucide-react';
 import { handleError } from '@/lib/errorHandler';
+import { motion } from 'framer-motion';
+import {
+  BarChart as RBarChart,
+  Bar,
+  LineChart as RLineChart,
+  Line,
+  ComposedChart,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Radar,
+} from 'recharts';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
 
 const AnalyticsView = () => {
   const [stats, setStats] = useState({
@@ -156,77 +175,65 @@ const AnalyticsView = () => {
           <CardTitle>Distribuição por Status</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center">
-              <div className="w-32 text-sm font-medium">Novos</div>
-              <div className="flex-1">
-                <div className="h-4 bg-muted rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-primary"
-                    style={{
-                      width: `${stats.total_leads > 0 ? (stats.novos / stats.total_leads) * 100 : 0}%`,
-                    }}
-                  />
-                </div>
-              </div>
-              <div className="w-16 text-right text-sm text-muted-foreground">
-                {stats.novos}
-              </div>
-            </div>
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+            <ChartContainer
+              variant="astral"
+              config={{
+                novos: { label: 'Novos', color: 'hsl(var(--primary))' },
+                em_atendimento: { label: 'Em atendimento', color: 'hsl(var(--accent))' },
+                fechados: { label: 'Fechados', color: 'hsl(var(--success))' },
+                perdidos: { label: 'Perdidos', color: 'hsl(var(--muted-foreground))' },
+                conversao: { label: 'Conversão %', color: 'hsl(var(--warning))' },
+              }}
+            >
+              <ComposedChart
+                data={[
+                  { name: 'Status', novos: stats.novos, em_atendimento: stats.em_atendimento, fechados: stats.fechados, perdidos: stats.perdidos, conversao: Number(stats.conversion_rate.toFixed(1)) },
+                ]}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <ChartLegend content={<ChartLegendContent />} />
+                <Bar dataKey="novos" fill="hsl(var(--primary))" radius={[4,4,0,0]} />
+                <Bar dataKey="em_atendimento" fill="hsl(var(--accent))" radius={[4,4,0,0]} />
+                <Bar dataKey="fechados" fill="hsl(var(--success))" radius={[4,4,0,0]} />
+                <Bar dataKey="perdidos" fill="hsl(var(--muted-foreground))" radius={[4,4,0,0]} />
+                <Line type="monotone" dataKey="conversao" stroke="hsl(var(--warning))" strokeWidth={2} dot={false} />
+              </ComposedChart>
+            </ChartContainer>
+          </motion.div>
+        </CardContent>
+      </Card>
 
-            <div className="flex items-center">
-              <div className="w-32 text-sm font-medium">Em Atendimento</div>
-              <div className="flex-1">
-                <div className="h-4 bg-muted rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-accent"
-                    style={{
-                      width: `${
-                        stats.total_leads > 0 ? (stats.em_atendimento / stats.total_leads) * 100 : 0
-                      }%`,
-                    }}
-                  />
-                </div>
-              </div>
-              <div className="w-16 text-right text-sm text-muted-foreground">
-                {stats.em_atendimento}
-              </div>
-            </div>
-
-            <div className="flex items-center">
-              <div className="w-32 text-sm font-medium">Fechados</div>
-              <div className="flex-1">
-                <div className="h-4 bg-muted rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-success"
-                    style={{
-                      width: `${stats.total_leads > 0 ? (stats.fechados / stats.total_leads) * 100 : 0}%`,
-                    }}
-                  />
-                </div>
-              </div>
-              <div className="w-16 text-right text-sm text-muted-foreground">
-                {stats.fechados}
-              </div>
-            </div>
-
-            <div className="flex items-center">
-              <div className="w-32 text-sm font-medium">Perdidos</div>
-              <div className="flex-1">
-                <div className="h-4 bg-muted rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-muted-foreground"
-                    style={{
-                      width: `${stats.total_leads > 0 ? (stats.perdidos / stats.total_leads) * 100 : 0}%`,
-                    }}
-                  />
-                </div>
-              </div>
-              <div className="w-16 text-right text-sm text-muted-foreground">
-                {stats.perdidos}
-              </div>
-            </div>
-          </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Radar de Performance</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+            <ChartContainer
+              variant="astral"
+              config={{
+                metric: { label: 'Score', color: 'hsl(var(--primary))' },
+              }}
+            >
+              <RadarChart outerRadius={90} data={[
+                { subject: 'Novos', metric: stats.novos || 0 },
+                { subject: 'Atendimento', metric: stats.em_atendimento || 0 },
+                { subject: 'Fechados', metric: stats.fechados || 0 },
+                { subject: 'Perdidos', metric: stats.perdidos || 0 },
+              ]}>
+                <PolarGrid />
+                <PolarAngleAxis dataKey="subject" />
+                <PolarRadiusAxis angle={30} domain={[0, Math.max(stats.total_leads, 10)]} />
+                <Radar name="Score" dataKey="metric" stroke="hsl(var(--primary))" fill="hsl(var(--primary))" fillOpacity={0.3} />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Legend />
+              </RadarChart>
+            </ChartContainer>
+          </motion.div>
         </CardContent>
       </Card>
     </div>

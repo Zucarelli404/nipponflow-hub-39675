@@ -1,0 +1,39 @@
+{
+  "meta": { "source": "DADOS DEMO", "generated_at": "2025-11-12T00:00:00.000Z" },
+  "data": [
+    { "role_id": "role-admin", "module_id": "mod-graduacao", "can_view": true, "can_create": true, "can_edit": true, "can_delete": true },
+    { "role_id": "role-admin", "module_id": "mod-inbox", "can_view": true, "can_create": true, "can_edit": true, "can_delete": true },
+    { "role_id": "role-admin", "module_id": "mod-leads", "can_view": true, "can_create": true, "can_edit": true, "can_delete": true },
+    { "role_id": "role-admin", "module_id": "mod-visitas", "can_view": true, "can_create": true, "can_edit": true, "can_delete": true },
+    { "role_id": "role-admin", "module_id": "mod-vendas", "can_view": true, "can_create": true, "can_edit": true, "can_delete": true },
+    { "role_id": "role-admin", "module_id": "mod-remarketing", "can_view": true, "can_create": true, "can_edit": true, "can_delete": true },
+    { "role_id": "role-admin", "module_id": "mod-equipe", "can_view": true, "can_create": true, "can_edit": true, "can_delete": true },
+    { "role_id": "role-admin", "module_id": "mod-candidatos", "can_view": true, "can_create": true, "can_edit": true, "can_delete": true },
+    { "role_id": "role-admin", "module_id": "mod-estoque", "can_view": true, "can_create": true, "can_edit": true, "can_delete": true },
+    { "role_id": "role-admin", "module_id": "mod-cursos", "can_view": true, "can_create": true, "can_edit": true, "can_delete": true },
+    { "role_id": "role-admin", "module_id": "mod-gamificacao", "can_view": true, "can_create": true, "can_edit": true, "can_delete": true },
+    { "role_id": "role-admin", "module_id": "mod-relatorios", "can_view": true, "can_create": true, "can_edit": true, "can_delete": true },
+    { "role_id": "role-admin", "module_id": "mod-configuracoes", "can_view": true, "can_create": true, "can_edit": true, "can_delete": true },
+    { "role_id": "role-admin", "module_id": "mod-consultor", "can_view": true, "can_create": false, "can_edit": false, "can_delete": false },
+    { "role_id": "role-admin", "module_id": "mod-distribuidor", "can_view": true, "can_create": false, "can_edit": false, "can_delete": false },
+    { "role_id": "role-admin", "module_id": "mod-canal-aguia", "can_view": true, "can_create": false, "can_edit": false, "can_delete": false },
+    
+    { "role_id": "role-diretor", "module_id": "mod-consultor", "can_view": true, "can_create": false, "can_edit": false, "can_delete": false },
+    { "role_id": "role-diretor", "module_id": "mod-distribuidor", "can_view": true, "can_create": false, "can_edit": false, "can_delete": false },
+    { "role_id": "role-diretor", "module_id": "mod-leads", "can_view": true, "can_create": true, "can_edit": true, "can_delete": false },
+    { "role_id": "role-diretor", "module_id": "mod-visitas", "can_view": true, "can_create": true, "can_edit": true, "can_delete": false },
+    { "role_id": "role-diretor", "module_id": "mod-vendas", "can_view": true, "can_create": true, "can_edit": true, "can_delete": false },
+    { "role_id": "role-diretor", "module_id": "mod-relatorios", "can_view": true, "can_create": false, "can_edit": false, "can_delete": false },
+    { "role_id": "role-diretor", "module_id": "mod-canal-aguia", "can_view": true, "can_create": false, "can_edit": false, "can_delete": false },
+
+    { "role_id": "role-gerente", "module_id": "mod-leads", "can_view": true, "can_create": true, "can_edit": true, "can_delete": false },
+    { "role_id": "role-gerente", "module_id": "mod-visitas", "can_view": true, "can_create": true, "can_edit": true, "can_delete": false },
+    { "role_id": "role-gerente", "module_id": "mod-vendas", "can_view": true, "can_create": true, "can_edit": true, "can_delete": false },
+    { "role_id": "role-gerente", "module_id": "mod-relatorios", "can_view": true, "can_create": false, "can_edit": false, "can_delete": false },
+
+    { "role_id": "role-especialista", "module_id": "mod-leads", "can_view": true, "can_create": true, "can_edit": true, "can_delete": false },
+    { "role_id": "role-especialista", "module_id": "mod-visitas", "can_view": true, "can_create": true, "can_edit": true, "can_delete": false },
+    { "role_id": "role-especialista", "module_id": "mod-vendas", "can_view": true, "can_create": true, "can_edit": true, "can_delete": false },
+    { "role_id": "role-especialista", "module_id": "mod-canal-aguia", "can_view": true, "can_create": false, "can_edit": false, "can_delete": false }
+  ]
+}

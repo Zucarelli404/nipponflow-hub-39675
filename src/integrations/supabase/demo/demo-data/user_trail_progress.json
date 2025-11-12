@@ -1,0 +1,7 @@
+{
+  "meta": { "source": "DADOS DEMO", "generated_at": "2025-11-12T00:00:00.000Z" },
+  "data": [
+    { "id": "utp-1", "user_id": "profile-2", "trail_id": "trail-abc", "progress": 65, "updated_at": "2025-11-10T10:00:00.000Z" },
+    { "id": "utp-2", "user_id": "profile-3", "trail_id": "trail-abc", "progress": 40, "updated_at": "2025-11-10T11:00:00.000Z" }
+  ]
+}

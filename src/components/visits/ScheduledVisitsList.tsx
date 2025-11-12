@@ -52,7 +52,7 @@ const ScheduledVisitsList = () => {
   };
 
   const handleUpdateStatus = async (
-    visitId: string,
+    visit: ScheduledVisit,
     status: 'realizada' | 'cancelada'
   ) => {
     try {
@@ -60,9 +60,37 @@ const ScheduledVisitsList = () => {
       const { error } = await (supabase as any)
         .from('scheduled_visits')
         .update({ status })
-        .eq('id', visitId);
+        .eq('id', visit.id);
 
       if (error) throw error;
+
+      // Quando marcar como realizada, criar automaticamente um relatório em "visitas"
+      if (status === 'realizada') {
+        const reportId = `report-${Date.now()}`;
+        const payload = {
+          id: reportId,
+          lead_id: (visit as any).lead_id,
+          especialista_id: (visit as any).especialista_id,
+          data_visita: visit.data_visita,
+          venda_realizada: false,
+          forma_pagamento: null,
+          valor_total: 0,
+          observacoes: (visit as any).observacoes || null,
+          // Campos aninhados para compatibilidade com UI em modo DEMO
+          lead: { nome: (visit as any).lead?.nome },
+          especialista: { nome: (visit as any).especialista?.nome },
+          visit_items: [],
+        };
+
+        // @ts-ignore
+        const { error: insertError } = await (supabase as any)
+          .from('visit_reports')
+          .insert(payload);
+
+        if (insertError) {
+          console.error('Erro ao criar relatório de visita:', insertError);
+        }
+      }
 
       toast.success(
         status === 'realizada' ? 'Visita marcada como realizada' : 'Visita cancelada'
@@ -174,7 +202,7 @@ const ScheduledVisitsList = () => {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => handleUpdateStatus(visit.id, 'realizada')}
+                      onClick={() => handleUpdateStatus(visit, 'realizada')}
                       title="Marcar como realizada"
                     >
                       <Check className="h-4 w-4" />
@@ -182,7 +210,7 @@ const ScheduledVisitsList = () => {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => handleUpdateStatus(visit.id, 'cancelada')}
+                      onClick={() => handleUpdateStatus(visit, 'cancelada')}
                       title="Cancelar visita"
                     >
                       <X className="h-4 w-4" />

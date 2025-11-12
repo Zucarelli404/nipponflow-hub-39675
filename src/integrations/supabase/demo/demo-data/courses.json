@@ -1,0 +1,9 @@
+{
+  "meta": { "source": "DADOS DEMO", "generated_at": "2025-11-12T00:00:00.000Z" },
+  "data": [
+    { "id": "course-1", "titulo": "Apresentação ABC Essencial", "descricao": "Aula introdutória sobre a metodologia ABC.", "tipo": "aula", "status": "publicado", "conteudo_url": "https://videos.empresa.com/abc-essencial", "duracao_minutos": 45, "data_live": null, "created_at": "2025-11-10T10:00:00.000Z", "autor_id": "profile-1" },
+    { "id": "course-2", "titulo": "E-book: Guia de Vendas Consultivas", "descricao": "Conteúdo prático para elevar conversões.", "tipo": "ebook", "status": "publicado", "conteudo_url": "https://docs.empresa.com/guia-vendas.pdf", "duracao_minutos": null, "data_live": null, "created_at": "2025-11-08T10:00:00.000Z", "autor_id": "profile-2" },
+    { "id": "course-3", "titulo": "Live: Estratégias para Missão Renove", "descricao": "Sessão ao vivo com dicas.", "tipo": "live", "status": "publicado", "conteudo_url": null, "duracao_minutos": 60, "data_live": "2025-11-14T19:00:00.000Z", "created_at": "2025-11-12T10:00:00.000Z", "autor_id": "profile-1" },
+    { "id": "course-4", "titulo": "TeleAula: Sala de Treinamento Vendedores", "descricao": "Ambiente de simulações.", "tipo": "teleaula", "status": "publicado", "conteudo_url": "https://teleaula.empresa.com/sala-vendedores", "duracao_minutos": 50, "data_live": null, "created_at": "2025-11-12T08:00:00.000Z", "autor_id": "profile-2" }
+  ]
+}

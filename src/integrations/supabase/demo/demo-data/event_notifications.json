@@ -1,0 +1,8 @@
+{
+  "meta": { "source": "DADOS DEMO", "generated_at": "2025-11-12T00:00:00.000Z" },
+  "data": [
+    { "id": "evt-visit-1", "user_id": "demo-user-id", "type": "visit", "entity_id": "sched-1", "message": "Nova Visita Agendada (DADOS DEMO)", "created_at": "2025-11-12T10:10:00.000Z", "read": false, "metadata": { "data": "2025-11-13T14:00:00.000Z" } },
+    { "id": "evt-sale-joao", "user_id": "demo-user-id", "type": "sale", "entity_id": "visit-1", "message": "Nova Venda feita por João (DADOS DEMO)", "created_at": "2025-11-12T10:15:00.000Z", "read": false, "metadata": { "valor_total": 1250.0 } },
+    { "id": "evt-goal-maria", "user_id": "demo-user-id", "type": "goal", "entity_id": "goal-1", "message": "META ALCANÇADA por Maria (DADOS DEMO)", "created_at": "2025-11-12T10:20:00.000Z", "read": false, "metadata": null }
+  ]
+}

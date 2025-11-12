@@ -1,0 +1,13 @@
+{
+  "meta": { "source": "DADOS DEMO", "generated_at": "2025-11-12T00:00:00.000Z" },
+  "data": [
+    { "id": "visit-1", "lead_id": "lead-1", "especialista_id": "profile-2", "data_visita": "2025-10-11T14:00:00.000Z", "venda_realizada": true, "valor_total": 1250.0, "forma_pagamento": "pix" },
+    { "id": "visit-2", "lead_id": "lead-2", "especialista_id": "profile-3", "data_visita": "2025-10-12T16:00:00.000Z", "venda_realizada": false, "valor_total": 0, "forma_pagamento": "boleto" },
+    { "id": "visit-3", "lead_id": "lead-3", "especialista_id": "profile-2", "data_visita": "2025-10-10T10:30:00.000Z", "venda_realizada": true, "valor_total": 800.0, "forma_pagamento": "cartao_credito" },
+    { "id": "visit-4", "lead_id": "lead-4", "especialista_id": "profile-3", "data_visita": "2025-10-05T12:00:00.000Z", "venda_realizada": false, "valor_total": 0, "forma_pagamento": "dinheiro" },
+    { "id": "visit-5", "lead_id": "lead-5", "especialista_id": "profile-2", "data_visita": "2025-10-14T15:00:00.000Z", "venda_realizada": true, "valor_total": 1500.0, "forma_pagamento": "pix" },
+    { "id": "visit-6", "lead_id": "lead-6", "especialista_id": "profile-3", "data_visita": "2025-10-07T11:00:00.000Z", "venda_realizada": false, "valor_total": 0, "forma_pagamento": "cartao_credito" },
+    { "id": "visit-7", "lead_id": "lead-7", "especialista_id": "profile-2", "data_visita": "2025-10-02T09:00:00.000Z", "venda_realizada": true, "valor_total": 980.0, "forma_pagamento": "pix" },
+    { "id": "visit-8", "lead_id": "lead-8", "especialista_id": "profile-3", "data_visita": "2025-10-01T13:00:00.000Z", "venda_realizada": true, "valor_total": 560.0, "forma_pagamento": "boleto" }
+  ]
+}

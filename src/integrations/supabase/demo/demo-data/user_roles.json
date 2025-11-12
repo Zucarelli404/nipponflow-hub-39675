@@ -1,0 +1,8 @@
+{
+  "meta": { "source": "DADOS DEMO", "generated_at": "2025-11-12T00:00:00.000Z" },
+  "data": [
+    { "user_id": "demo-user-id", "role": "admin", "role_id": "role-admin" },
+    { "user_id": "profile-1", "role": "diretor", "role_id": "role-diretor" },
+    { "user_id": "profile-2", "role": "especialista", "role_id": "role-especialista" }
+  ]
+}

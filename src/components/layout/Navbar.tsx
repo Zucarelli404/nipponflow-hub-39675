@@ -11,6 +11,9 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { MessageSquare, LogOut, User, Settings, Menu } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Sun, Moon } from "lucide-react";
+import { useEffect, useState } from "react";
+import { NotificationCenter } from "@/components/notifications/NotificationCenter";
 
 interface NavbarProps {
   onMenuClick?: () => void;
@@ -50,6 +53,23 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
     return email.charAt(0).toUpperCase();
   };
 
+  const [isDark, setIsDark] = useState(false);
+
+  // Initialize and persist theme: default to light (white version)
+  useEffect(() => {
+    const stored = localStorage.getItem("theme");
+    const initialDark = stored ? stored === "dark" : false;
+    setIsDark(initialDark);
+    document.documentElement.classList.toggle("dark", initialDark);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+    document.documentElement.classList.toggle("dark", isDark);
+  }, [isDark]);
+
+  const toggleTheme = () => setIsDark((v) => !v);
+
   return (
     <nav className="sticky top-0 z-50 border-b bg-card shadow-sm">
       <div className="w-full px-3 sm:px-4 py-2 sm:py-3">
@@ -77,6 +97,23 @@ const Navbar = ({ onMenuClick }: NavbarProps) => {
                 {getRoleLabel(userRole)}
               </Badge>
             )}
+
+            {/* Centro unificado de notificações */}
+            <NotificationCenter />
+
+            {/* Modo offline: dados mockados sempre ativos (toggle removido) */}
+
+            {/* Dark mode toggle */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 sm:h-10 sm:w-10"
+              title="Alternar tema"
+              aria-label="Alternar tema"
+              onClick={toggleTheme}
+            >
+              {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+            </Button>
 
             <Button
               variant="ghost"

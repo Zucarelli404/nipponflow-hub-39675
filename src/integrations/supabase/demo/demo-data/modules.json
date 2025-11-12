@@ -1,0 +1,21 @@
+{
+  "meta": { "source": "DADOS DEMO", "generated_at": "2025-11-12T00:00:00.000Z" },
+  "data": [
+    { "id": "mod-graduacao", "nome": "Graduação Infinita", "codigo": "graduacao", "descricao": null },
+    { "id": "mod-inbox", "nome": "Chat", "codigo": "inbox", "descricao": null },
+    { "id": "mod-leads", "nome": "Clientes", "codigo": "leads", "descricao": null },
+    { "id": "mod-visitas", "nome": "Visitas", "codigo": "visitas", "descricao": null },
+    { "id": "mod-vendas", "nome": "Vendas", "codigo": "vendas", "descricao": null },
+    { "id": "mod-remarketing", "nome": "Revistas", "codigo": "remarketing", "descricao": null },
+    { "id": "mod-equipe", "nome": "Equipe", "codigo": "equipe", "descricao": null },
+    { "id": "mod-candidatos", "nome": "Candidatos", "codigo": "candidatos", "descricao": null },
+    { "id": "mod-estoque", "nome": "Estoque", "codigo": "estoque", "descricao": null },
+    { "id": "mod-cursos", "nome": "Cursos", "codigo": "cursos", "descricao": null },
+    { "id": "mod-gamificacao", "nome": "Gamificação", "codigo": "gamificacao", "descricao": null },
+    { "id": "mod-relatorios", "nome": "Relatórios", "codigo": "relatorios", "descricao": null },
+    { "id": "mod-configuracoes", "nome": "Configurações", "codigo": "configuracoes", "descricao": null },
+    { "id": "mod-consultor", "nome": "Consultor", "codigo": "consultor", "descricao": null },
+    { "id": "mod-distribuidor", "nome": "Distribuidor", "codigo": "distribuidor", "descricao": null },
+    { "id": "mod-canal-aguia", "nome": "Graduação inifinita", "codigo": "canal-aguia-real", "descricao": "Canal de transmissão demonstrativo (DADOS DEMO)" }
+  ]
+}

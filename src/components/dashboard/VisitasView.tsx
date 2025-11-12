@@ -10,6 +10,9 @@ import { ptBR } from 'date-fns/locale';
 import ScheduleVisitForm from '@/components/visits/ScheduleVisitForm';
 import AutoSuggestVisits from '@/components/visits/AutoSuggestVisits';
 import ScheduledVisitsList from '@/components/visits/ScheduledVisitsList';
+import { motion } from 'framer-motion';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, PieChart, Pie, Cell, ComposedChart, Area, Brush } from 'recharts';
 
 interface VisitReport {
   id: string;
@@ -33,6 +36,11 @@ const VisitasView = () => {
     successRate: 0,
   });
   const [loading, setLoading] = useState(true);
+  const [chartData, setChartData] = useState({
+    visitsByDay: [] as Array<{ day: string; visitas: number; vendas: number }>,
+    statusDist: [] as Array<{ status: string; total: number }>,
+    conversionTrend: [] as Array<{ day: string; taxa: number }>,
+  });
 
   useEffect(() => {
     fetchVisits();
@@ -85,11 +93,33 @@ const VisitasView = () => {
         thisMonth: monthVisits,
         successRate,
       });
+
+      recomputeCharts(visitData);
     } catch (error) {
       console.error('Error fetching visits:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const recomputeCharts = (base: VisitReport[]) => {
+    const byDay = new Map<string, { visitas: number; vendas: number }>();
+    base.forEach((v: any) => {
+      const key = new Date(v.data_visita).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+      const prev = byDay.get(key) || { visitas: 0, vendas: 0 };
+      byDay.set(key, { visitas: prev.visitas + 1, vendas: prev.vendas + (v.venda_realizada ? 1 : 0) });
+    });
+    const visitsByDay = Array.from(byDay.entries()).map(([day, v]) => ({ day, visitas: v.visitas, vendas: v.vendas }));
+
+    const totalVendas = base.filter((v: any) => v.venda_realizada).length;
+    const totalSem = base.length - totalVendas;
+    const statusDist = [
+      { status: 'com venda', total: totalVendas },
+      { status: 'sem venda', total: totalSem },
+    ];
+
+    const conversionTrend = visitsByDay.map((d) => ({ day: d.day, taxa: d.visitas > 0 ? Math.round((d.vendas / d.visitas) * 100) : 0 }));
+    setChartData({ visitsByDay, statusDist, conversionTrend });
   };
 
   return (
@@ -231,6 +261,91 @@ const VisitasView = () => {
           <AutoSuggestVisits />
         </TabsContent>
       </Tabs>
+
+      {/* Gráficos astronômicos de visitas */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+          <Card>
+            <CardHeader>
+              <CardTitle>Visitas e Vendas por dia</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {chartData.visitsByDay.length === 0 ? (
+                <div className="text-sm text-muted-foreground text-center py-6">Sem dados suficientes</div>
+              ) : (
+                <ChartContainer variant="astral" config={{ visitas: { label: 'Visitas', color: 'hsl(var(--accent))' }, vendas: { label: 'Vendas', color: 'hsl(var(--success))' } }}>
+                  <BarChart data={chartData.visitsByDay}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="day" />
+                    <YAxis />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <ChartLegend content={<ChartLegendContent />} />
+                    <Bar dataKey="visitas" fill="hsl(var(--accent))" radius={[4,4,0,0]} />
+                    <Bar dataKey="vendas" fill="hsl(var(--success))" radius={[4,4,0,0]} />
+                  </BarChart>
+                </ChartContainer>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, delay: 0.05 }}>
+          <Card>
+            <CardHeader>
+              <CardTitle>Status das visitas</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {chartData.statusDist.length === 0 ? (
+                <div className="text-sm text-muted-foreground text-center py-6">Sem dados suficientes</div>
+              ) : (
+                <ChartContainer variant="astral" config={{ total: { label: 'Total', color: 'hsl(var(--primary))' } }}>
+                  <PieChart>
+                    <Pie data={chartData.statusDist} dataKey="total" nameKey="status" outerRadius={100}>
+                      {chartData.statusDist.map((d, idx) => (
+                        <Cell key={d.status} fill={idx === 0 ? 'hsl(var(--success))' : 'hsl(var(--muted-foreground))'} />
+                      ))}
+                    </Pie>
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <ChartLegend content={<ChartLegendContent />} />
+                  </PieChart>
+                </ChartContainer>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, delay: 0.1 }}>
+        <Card>
+          <CardHeader>
+            <CardTitle>Tendência de conversão</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {chartData.conversionTrend.length === 0 ? (
+              <div className="text-sm text-muted-foreground text-center py-6">Sem dados suficientes</div>
+            ) : (
+              <ChartContainer variant="astral" config={{ taxa: { label: 'Conversão %', color: 'hsl(var(--primary))' } }}>
+                <ComposedChart data={chartData.conversionTrend}>
+                  <defs>
+                    <linearGradient id="grad-conv" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="rgba(14,165,233,0.35)" />
+                      <stop offset="100%" stopColor="rgba(14,165,233,0)" />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="day" />
+                  <YAxis domain={[0, 100]} />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <ChartLegend content={<ChartLegendContent />} />
+                  <Area type="monotone" dataKey="taxa" stroke="hsl(var(--primary))" fill="url(#grad-conv)" strokeWidth={2} />
+                  <Line type="monotone" dataKey="taxa" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} />
+                  <Brush dataKey="day" height={20} travellerWidth={8} />
+                </ComposedChart>
+              </ChartContainer>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   );
 };

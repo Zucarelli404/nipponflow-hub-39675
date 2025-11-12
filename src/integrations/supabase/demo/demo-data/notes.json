@@ -1,0 +1,7 @@
+{
+  "meta": { "source": "DADOS DEMO", "generated_at": "2025-11-12T00:00:00.000Z" },
+  "data": [
+    { "id": "note-1", "lead_id": "lead-2", "autor_id": "profile-1", "texto": "Contato inicial realizado pelo WhatsApp.", "created_at": "2025-11-11T12:00:00.000Z" },
+    { "id": "note-2", "lead_id": "lead-4", "autor_id": "profile-2", "texto": "[Remarketing - ligação] Cliente demonstrou interesse em retornar.", "created_at": "2025-11-12T09:00:00.000Z" }
+  ]
+}

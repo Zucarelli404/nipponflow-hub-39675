@@ -1,0 +1,7 @@
+{
+  "meta": { "source": "DADOS DEMO", "generated_at": "2025-11-12T00:00:00.000Z" },
+  "data": [
+    { "id": "prod-abc", "nome": "Kit Nippon ABC", "codigo": "ABC-001", "descricao": "Kit completo para apresentação ABC (DADOS DEMO)", "unidade_medida": "UN", "quantidade_atual": 12, "quantidade_minima": 5, "preco_custo": 150.0, "preco_venda": 250.0, "categoria": "Apresentação", "ativo": true },
+    { "id": "prod-rev", "nome": "Assinatura Revista Nippon", "codigo": "REV-450", "descricao": "Plano mensal da revista (DADOS DEMO)", "unidade_medida": "UN", "quantidade_atual": 40, "quantidade_minima": 10, "preco_custo": 300.0, "preco_venda": 450.0, "categoria": "Assinatura", "ativo": true }
+  ]
+}

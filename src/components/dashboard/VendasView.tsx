@@ -15,6 +15,15 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import VisitReportForm from '@/components/visits/VisitReportForm';
+import { motion } from 'framer-motion';
+import {
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent,
+  ChartLegend,
+  ChartLegendContent,
+} from '@/components/ui/chart';
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, PieChart, Pie, Cell, ComposedChart, Area, ReferenceLine, Brush } from 'recharts';
 
 interface Sale {
   id: string;
@@ -45,6 +54,11 @@ const VendasView = () => {
   const [loading, setLoading] = useState(true);
   const [selectedLeadId, setSelectedLeadId] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [chartData, setChartData] = useState({
+    salesByDay: [] as Array<{ day: string; vendas: number; faturamento: number }>,
+    paymentDist: [] as Array<{ metodo: string; valor: number }>,
+    revenueTrend: [] as Array<{ day: string; receita: number }>,
+  });
 
   const handleSuccess = () => {
     setDialogOpen(false);
@@ -104,11 +118,34 @@ const VendasView = () => {
         avgTicket,
         itemsSold: totalItems,
       });
+
+      // Charts
+      recomputeCharts(salesData);
     } catch (error) {
       console.error('Error fetching sales:', error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const recomputeCharts = (base: Sale[]) => {
+    const byDayMap = new Map<string, { vendas: number; faturamento: number }>();
+    base.forEach((s: any) => {
+      const key = new Date(s.data_visita).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' });
+      const prev = byDayMap.get(key) || { vendas: 0, faturamento: 0 };
+      byDayMap.set(key, { vendas: prev.vendas + 1, faturamento: prev.faturamento + Number(s.valor_total || 0) });
+    });
+    const salesByDay = Array.from(byDayMap.entries()).map(([day, v]) => ({ day, vendas: v.vendas, faturamento: v.faturamento }));
+
+    const payMap = new Map<string, number>();
+    base.forEach((s: any) => {
+      const key = (s.forma_pagamento || 'outros').replace('_', ' ');
+      payMap.set(key, (payMap.get(key) || 0) + Number(s.valor_total || 0));
+    });
+    const paymentDist = Array.from(payMap.entries()).map(([metodo, valor]) => ({ metodo, valor }));
+
+    const revenueTrend = salesByDay.map((d) => ({ day: d.day, receita: d.faturamento }));
+    setChartData({ salesByDay, paymentDist, revenueTrend });
   };
 
   return (
@@ -248,6 +285,98 @@ const VendasView = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Gráficos astronômicos de vendas */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}>
+          <Card>
+            <CardHeader>
+              <CardTitle>Vendas por dia</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {chartData.salesByDay.length === 0 ? (
+                <div className="text-sm text-muted-foreground text-center py-6">Sem dados suficientes</div>
+              ) : (
+                <ChartContainer
+                  variant="astral"
+                  config={{
+                    vendas: { label: 'Vendas', color: 'hsl(var(--primary))' },
+                    faturamento: { label: 'Faturamento', color: 'hsl(var(--warning))' },
+                  }}
+                >
+                  <BarChart data={chartData.salesByDay}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="day" />
+                    <YAxis />
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <ChartLegend content={<ChartLegendContent />} />
+                    <Bar dataKey="vendas" fill="hsl(var(--primary))" radius={[4,4,0,0]} />
+                    <Bar dataKey="faturamento" fill="hsl(var(--warning))" radius={[4,4,0,0]} />
+                  </BarChart>
+                </ChartContainer>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, delay: 0.05 }}>
+          <Card>
+            <CardHeader>
+              <CardTitle>Formas de pagamento</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {chartData.paymentDist.length === 0 ? (
+                <div className="text-sm text-muted-foreground text-center py-6">Sem dados suficientes</div>
+              ) : (
+                <ChartContainer variant="astral" config={{ valor: { label: 'Valor', color: 'hsl(var(--success))' } }}>
+                  <PieChart>
+                    <Pie data={chartData.paymentDist} dataKey="valor" nameKey="metodo" outerRadius={100}>
+                      {chartData.paymentDist.map((_, idx) => (
+                        <Cell key={`cell-${idx}`} fill={["hsl(var(--success))","hsl(var(--primary))","hsl(var(--accent))","hsl(var(--warning))"][idx % 4]} />
+                      ))}
+                    </Pie>
+                    <ChartTooltip content={<ChartTooltipContent />} />
+                    <ChartLegend content={<ChartLegendContent />} />
+                  </PieChart>
+                </ChartContainer>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, delay: 0.1 }}>
+        <Card>
+          <CardHeader>
+            <CardTitle>Receita ao longo dos dias</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {chartData.revenueTrend.length === 0 ? (
+              <div className="text-sm text-muted-foreground text-center py-6">Sem dados suficientes</div>
+            ) : (
+              <ChartContainer variant="astral" config={{ receita: { label: 'Receita', color: 'hsl(var(--primary))' } }}>
+                <ComposedChart data={chartData.revenueTrend}>
+                  <defs>
+                    <linearGradient id="grad-receita-vendas" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="rgba(14,165,233,0.35)" />
+                      <stop offset="100%" stopColor="rgba(14,165,233,0)" />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="day" />
+                  <YAxis />
+                  <ChartTooltip content={<ChartTooltipContent />} />
+                  <ChartLegend content={<ChartLegendContent />} />
+                  <Area type="monotone" dataKey="receita" stroke="hsl(var(--primary))" fill="url(#grad-receita-vendas)" strokeWidth={2} />
+                  <Line type="monotone" dataKey="receita" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} />
+                  <ReferenceLine y={stats.avgTicket} stroke="hsl(var(--warning))" strokeDasharray="3 3" label="Ticket médio" />
+                  <Brush dataKey="day" height={20} travellerWidth={8} />
+                </ComposedChart>
+              </ChartContainer>
+            )}
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   );
 };

@@ -182,6 +182,31 @@ const VisitReportForm = ({ leadId, onSuccess }: VisitReportFormProps) => {
         if (itemsError) throw itemsError;
       }
 
+      // Notificação de evento (venda realizada)
+      if (vendaRealizada) {
+        const leadNome = leads.find(l => l.id === selectedLeadId)?.nome;
+        await (supabase as any)
+          .from('event_notifications')
+          .insert({
+            id: `evt-${Date.now()}`,
+            user_id: user.id,
+            type: 'sale',
+            entity_id: (report as any).id,
+            message: `Venda registrada${leadNome ? ` para ${leadNome}` : ''}`,
+            created_at: new Date().toISOString(),
+            read: false,
+            metadata: {
+              lead_id: selectedLeadId,
+              lead_nome: leadNome,
+              valor_total: valorTotal,
+              data: validatedData.dataVisita,
+            },
+          });
+
+        // Dispara atualização local (DEMO)
+        window.dispatchEvent(new CustomEvent('event-notifications-updated'));
+      }
+
       toast({
         title: 'Relatório criado',
         description: 'O relatório de visita foi registrado com sucesso.',
