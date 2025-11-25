@@ -54,7 +54,9 @@ const AuditLogTable = ({ userId, limit = 50 }: AuditLogTableProps) => {
         .select('id, nome, email')
         .in('id', userIds);
 
-      const profilesMap = new Map(profiles?.map(p => [p.id, p]) || []);
+      const profilesMap = new Map<string, { id: string; nome: string; email: string }>(
+        profiles?.map(p => [p.id, p]) || []
+      );
 
       const logsWithProfiles = logsData?.map(log => ({
         ...log,

@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { UserCheck, Users, Award, Target, Plus, Mail, Link2 } from 'lucide-react';
 import TeamList from '@/components/team/TeamList';
+import AddTeamMemberForm from '@/components/team/AddTeamMemberForm';
 import {
   Dialog,
   DialogContent,
@@ -11,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
@@ -47,45 +49,57 @@ const EquipeView = () => {
               Novo Membro
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Adicionar Novo Membro</DialogTitle>
               <DialogDescription>
-                Convide novos membros para sua equipe compartilhando o link de cadastro abaixo
+                Escolha como adicionar um novo membro à equipe
               </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="invite-link">Link de Convite</Label>
-                <div className="flex gap-2">
-                  <Input
-                    id="invite-link"
-                    value={inviteLink}
-                    readOnly
-                    className="flex-1"
-                  />
-                  <Button onClick={copyToClipboard} variant="outline">
-                    <Link2 className="h-4 w-4" />
-                  </Button>
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Compartilhe este link com novos membros para que eles possam se cadastrar
-                </p>
-              </div>
+            
+            <Tabs defaultValue="manual" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="manual">Adicionar Manualmente</TabsTrigger>
+                <TabsTrigger value="link">Link de Convite</TabsTrigger>
+              </TabsList>
               
-              <div className="bg-accent/50 p-4 rounded-lg space-y-2">
-                <div className="flex items-center gap-2 text-sm font-medium">
-                  <Mail className="h-4 w-4" />
-                  Próximos Passos
+              <TabsContent value="manual" className="space-y-4 py-4">
+                <AddTeamMemberForm onSuccess={() => setDialogOpen(false)} />
+              </TabsContent>
+              
+              <TabsContent value="link" className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="invite-link">Link de Convite</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="invite-link"
+                      value={inviteLink}
+                      readOnly
+                      className="flex-1"
+                    />
+                    <Button onClick={copyToClipboard} variant="outline">
+                      <Link2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Compartilhe este link com novos membros para que eles possam se cadastrar
+                  </p>
                 </div>
-                <ol className="list-decimal list-inside text-sm text-muted-foreground space-y-1">
-                  <li>Novo membro se cadastra usando o link</li>
-                  <li>Acesse Configurações → Usuários</li>
-                  <li>Atribua o perfil adequado (Diretor, Gerente, etc)</li>
-                  <li>Configure a equipe se necessário</li>
-                </ol>
-              </div>
-            </div>
+                
+                <div className="bg-accent/50 p-4 rounded-lg space-y-2">
+                  <div className="flex items-center gap-2 text-sm font-medium">
+                    <Mail className="h-4 w-4" />
+                    Próximos Passos
+                  </div>
+                  <ol className="list-decimal list-inside text-sm text-muted-foreground space-y-1">
+                    <li>Novo membro se cadastra usando o link</li>
+                    <li>Acesse Configurações → Usuários</li>
+                    <li>Atribua o perfil adequado (Diretor, Gerente, etc)</li>
+                    <li>Configure a equipe se necessário</li>
+                  </ol>
+                </div>
+              </TabsContent>
+            </Tabs>
           </DialogContent>
         </Dialog>
       </div>
