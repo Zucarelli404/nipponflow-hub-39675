@@ -34,7 +34,9 @@ const UserActivityChart = () => {
         .select('id, nome')
         .in('id', userIds);
 
-      const profilesMap = new Map(profiles?.map(p => [p.id, p.nome]) || []);
+      const profilesMap = new Map<string, string>(
+        profiles?.map(p => [p.id, p.nome]) || []
+      );
 
       // Agrupar por usuário
       const grouped = (logsData || []).reduce((acc: Record<string, UserActivity>, log) => {
@@ -51,7 +53,7 @@ const UserActivityChart = () => {
         return acc;
       }, {});
 
-      const result = Object.values(grouped).sort((a, b) => b.total_acoes - a.total_acoes);
+      const result = (Object.values(grouped) as UserActivity[]).sort((a, b) => b.total_acoes - a.total_acoes);
       setActivities(result);
     } catch (error) {
       console.error('Erro ao buscar atividades:', error);
