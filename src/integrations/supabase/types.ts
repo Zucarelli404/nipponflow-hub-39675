@@ -1367,7 +1367,7 @@ export type Database = {
       update_user_streak: { Args: never; Returns: undefined }
     }
     Enums: {
-      app_role: "admin" | "diretor" | "gerente"
+      app_role: "admin" | "diretor" | "gerente" | "consultor"
       course_status: "rascunho" | "publicado" | "arquivado"
       course_type: "ebook" | "aula" | "live" | "teleaula"
       lead_status: "novo" | "em_atendimento" | "fechado" | "perdido"
@@ -1500,7 +1500,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "diretor", "gerente"],
+      app_role: ["admin", "diretor", "gerente", "consultor"],
       course_status: ["rascunho", "publicado", "arquivado"],
       course_type: ["ebook", "aula", "live", "teleaula"],
       lead_status: ["novo", "em_atendimento", "fechado", "perdido"],

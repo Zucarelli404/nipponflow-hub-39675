@@ -44,19 +44,28 @@ export const LevelDetailModal = ({ progress, open, onOpenChange }: LevelDetailMo
 
   useEffect(() => {
     if (!open) return;
-    setLoadingGoals(true);
-    const categoria = level?.requisito_tipo;
-    supabase
-      .from("goals" as any)
-      .select("*")
-      .or("tipo.eq.individual,tipo.eq.geral")
-      .eq("status", "ativa")
-      .then(({ data }) => {
-        const list = (data as any[]) || [];
+    
+    const loadGoals = async () => {
+      setLoadingGoals(true);
+      const categoria = level?.requisito_tipo;
+      
+      const goalData = await supabase
+        .from("goals" as any)
+        .select("*")
+        .or("tipo.eq.individual,tipo.eq.geral")
+        .eq("status", "ativa");
+
+      if (goalData.error) {
+        console.error("Error loading goals:", goalData.error);
+      } else {
+        const list = (goalData.data as any[]) || [];
         const filtered = categoria ? list.filter((g) => g.categoria === categoria) : list;
         setRelatedGoals(filtered);
-      })
-      .finally(() => setLoadingGoals(false));
+      }
+      setLoadingGoals(false);
+    };
+
+    loadGoals();
   }, [open, level?.requisito_tipo]);
 
   // Tips based on level type
