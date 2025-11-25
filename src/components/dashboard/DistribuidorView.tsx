@@ -133,21 +133,18 @@ const DistribuidorView = () => {
       const revenueTotal = salesData.reduce((sum: number, s: any) => sum + Number(s.valor_total || 0), 0);
       const avgTicket = salesData.length > 0 ? revenueTotal / salesData.length : 0;
 
-      const { data: invData } = await supabase
-        .from('invoices')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('due_date', { ascending: true });
+      // TODO: Implementar tabela de invoices no futuro
+      // const { data: invData } = await supabase
+      //   .from('invoices')
+      //   .select('*')
+      //   .eq('user_id', user.id)
+      //   .order('due_date', { ascending: true });
 
-      const invoicesList = (invData || []) as Invoice[];
+      const invoicesList: Invoice[] = [];
       setInvoices(invoicesList);
 
-      const pendentes = invoicesList
-        .filter((i: any) => i.status === 'pendente')
-        .reduce((sum: number, i: any) => sum + Number(i.valor || 0), 0);
-      const recebidas = invoicesList
-        .filter((i: any) => i.status === 'pago')
-        .reduce((sum: number, i: any) => sum + Number(i.valor || 0), 0);
+      const pendentes = 0;
+      const recebidas = 0;
 
       const lucroEstimado = revenueTotal * 0.3;
 

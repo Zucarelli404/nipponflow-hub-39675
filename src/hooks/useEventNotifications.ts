@@ -40,7 +40,7 @@ export const useEventNotifications = () => {
 
       if (error) throw error;
 
-      const notifs = ((data as EventNotification[]) || []).filter((n) => {
+      const notifs = ((data || []) as any[]).filter((n: any) => {
         const allowedMessages = [
           "Nova Visita Agendada",
           "Nova Venda feita por João",
