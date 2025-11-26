@@ -127,22 +127,24 @@ const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
   };
 
   const menuGroups = [
-    {
-      id: "principal",
-      label: "Principal",
-      roles: ["admin", "gerente", "diretor"],
-      items: [
-        { id: "graduacao", label: "Graduação Infinita", icon: Target },
-        { id: "consultor", label: "Consultor", icon: UserCheck },
-        { id: "distribuidor", label: "Distribuidor", icon: BarChart3 },
-      ],
-    },
+    // BLOQUEADO PARA PRODUÇÃO: Principal (Graduação Infinita, Consultor, Distribuidor)
+    // {
+    //   id: "principal",
+    //   label: "Principal",
+    //   roles: ["admin", "gerente", "diretor"],
+    //   items: [
+    //     { id: "graduacao", label: "Graduação Infinita", icon: Target },
+    //     { id: "consultor", label: "Consultor", icon: UserCheck },
+    //     { id: "distribuidor", label: "Distribuidor", icon: BarChart3 },
+    //   ],
+    // },
     {
       id: "clientes",
       label: "Clientes",
       roles: ["admin", "gerente", "diretor"],
       items: [
-        { id: "inbox", label: "Chat", icon: MessageSquare },
+        // BLOQUEADO PARA PRODUÇÃO: Chat
+        // { id: "inbox", label: "Chat", icon: MessageSquare },
         { id: "leads", label: "Clientes", icon: Users },
         { id: "visitas", label: "Visitas", icon: Calendar },
         { id: "vendas", label: "Vendas", icon: ShoppingCart },
@@ -157,8 +159,9 @@ const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
         { id: "equipe", label: "Equipe", icon: UserCheck },
         { id: "candidatos", label: "Candidatos", icon: UserPlus },
         { id: "estoque", label: "Estoque", icon: Package },
-        { id: "cursos", label: "Cursos", icon: BookOpen },
-        { id: "gamificacao", label: "Gamificação", icon: Trophy },
+        // BLOQUEADO PARA PRODUÇÃO: Cursos e Gamificação
+        // { id: "cursos", label: "Cursos", icon: BookOpen },
+        // { id: "gamificacao", label: "Gamificação", icon: Trophy },
       ],
     },
     {
@@ -198,7 +201,8 @@ const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
   return (
     <aside aria-label="Barra lateral" className={asideClass}>
       <div className="flex flex-col h-full">
-        {(isMobile || !collapsed) && hasModulePermission("canal-aguia-real") && (
+        {/* BLOQUEADO PARA PRODUÇÃO: Canal Águia Real (Graduação Infinita) */}
+        {/* {(isMobile || !collapsed) && hasModulePermission("canal-aguia-real") && (
           <div className="p-4 border-b animate-fade-in">
             <Button
               variant="outline"
@@ -228,7 +232,7 @@ const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
               </div>
             </Button>
           </div>
-        )}
+        )} */}
         <div className="p-3 border-b animate-fade-in flex items-center justify-between">
           {!collapsed && (
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Menu</h2>
@@ -332,18 +336,8 @@ const Sidebar = ({ activePage, onNavigate }: SidebarProps) => {
           )}
         </nav>
         {isMobile && (
-          <div className="border-t p-2 grid grid-cols-3 gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-10 w-10"
-              title="Chat"
-              aria-label="Chat"
-              disabled={!hasModulePermission("chat")}
-              onClick={() => onNavigate("chat")}
-            >
-              <MessageSquare className="h-5 w-5" />
-            </Button>
+          <div className="border-t p-2 grid grid-cols-2 gap-2">
+            {/* BLOQUEADO: Chat removido */}
             <Button
               variant="ghost"
               size="icon"

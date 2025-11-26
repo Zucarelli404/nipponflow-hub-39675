@@ -41,7 +41,7 @@ const Index = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { hasModulePermission, loading: loadingPermissions } = useModulePermissions();
-  const [activePage, setActivePage] = useState('graduacao');
+  const [activePage, setActivePage] = useState('leads');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showDemoNotifs, setShowDemoNotifs] = useState(false);
@@ -117,16 +117,28 @@ const Index = () => {
     // Bloqueio genérico por módulo (admin sempre tem acesso)
     const canViewActive = hasModulePermission(activePage) || userRole === 'admin';
     if (!canViewActive) {
-      return <GraduacaoView />;
+      return <LeadsView />;
     }
 
     switch (activePage) {
-      case 'graduacao':
-        return <GraduacaoView />;
-      case 'graduacao-ranking':
-        return <GraduacaoRankingView />;
-      case 'inbox':
-        return <InboxView />;
+      // BLOQUEADAS PARA PRODUÇÃO:
+      // case 'graduacao':
+      //   return <GraduacaoView />;
+      // case 'graduacao-ranking':
+      //   return <GraduacaoRankingView />;
+      // case 'inbox':
+      //   return <InboxView />;
+      // case 'consultor':
+      //   return <ConsultorView />;
+      // case 'distribuidor':
+      //   return <DistribuidorView />;
+      // case 'cursos':
+      //   return <CursosView />;
+      // case 'gamificacao':
+      //   return <GamificacaoView />;
+      // case 'canal-aguia-real':
+      //   return <CanalAguiaRealView />;
+      
       case 'leads':
         return <LeadsView />;
       case 'visitas':
@@ -141,20 +153,12 @@ const Index = () => {
         return <CandidatosView />;
       case 'estoque':
         return <EstoqueView />;
-      case 'cursos':
-        return <CursosView />;
-      case 'gamificacao':
-        return <GamificacaoView />;
       case 'relatorios':
         return <RelatoriosView />;
       case 'analytics':
         return userRole === 'admin' || userRole === 'diretor' ? <AnalyticsView /> : <LeadsView />;
       case 'configuracoes':
         return userRole === 'admin' ? <SettingsView /> : <LeadsView />;
-      case 'consultor':
-        return <ConsultorView />;
-      case 'distribuidor':
-        return <DistribuidorView />;
       case 'agenda-rapida':
         return <AgendaRapidaView />;
       case 'loja-produtos':
@@ -163,10 +167,8 @@ const Index = () => {
         return <ProductRequestHistory />;
       case 'relatorio-vendas':
         return <VendasView />;
-      case 'canal-aguia-real':
-        return <CanalAguiaRealView />;
       default:
-        return <GraduacaoView />;
+        return <LeadsView />;
     }
   };
 
