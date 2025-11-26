@@ -18,7 +18,7 @@ export const BottomNav = ({ activePage, onNavigate }: BottomNavProps) => {
       isMain: true,
     },
     {
-      id: "graduacao",
+      id: "leads",
       label: "Início",
       icon: Home,
     },
