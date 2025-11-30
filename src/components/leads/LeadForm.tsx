@@ -62,7 +62,7 @@ const LeadForm = ({ onSuccess }: LeadFormProps) => {
       setOrigem('whatsapp');
       setOpen(false);
       onSuccess?.();
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof z.ZodError) {
         toast({
           title: 'Dados inválidos',
@@ -70,11 +70,13 @@ const LeadForm = ({ onSuccess }: LeadFormProps) => {
           variant: 'destructive',
         });
       } else {
+        const errorMessage = error?.message || error?.code || 'Erro desconhecido';
         toast({
           title: 'Erro ao cadastrar lead',
-          description: 'Não foi possível adicionar o lead. Tente novamente.',
+          description: `Não foi possível adicionar o lead. ${errorMessage}`,
           variant: 'destructive',
         });
+        if (import.meta.env.DEV) console.error('Lead insert error:', error);
       }
     } finally {
       setLoading(false);
