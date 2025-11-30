@@ -94,13 +94,17 @@ export const NotificationBridge = () => {
 
     const fetchAndBridge = async () => {
       try {
+        // Check if table exists first by attempting a limited query
         const { data, error } = await (supabase as any)
           .from('event_notifications')
           .select('*')
           .eq('user_id', user.id)
           .eq('read', false)
-          .order('created_at', { ascending: false });
+          .order('created_at', { ascending: false })
+          .limit(10);
 
+        // Skip silently if table doesn't exist (PGRST205)
+        if (error?.code === 'PGRST205') return;
         if (error) throw error;
 
         for (const row of (data as EventNotificationRow[]) || []) {
