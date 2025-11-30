@@ -14,10 +14,19 @@ interface Candidate {
   nome: string;
   email: string;
   telefone: string;
-  cargo_desejado: string;
   status: string;
   created_at: string;
+  observacoes: string | null;
 }
+
+const parseObservacoes = (obs: string | null): { cargo_desejado?: string } => {
+  if (!obs) return {};
+  try {
+    return JSON.parse(obs);
+  } catch {
+    return {};
+  }
+};
 
 const CandidatesList = () => {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
@@ -113,33 +122,36 @@ const CandidatesList = () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {candidates.map((candidate) => (
-          <TableRow key={candidate.id}>
-            <TableCell className="font-medium">{candidate.nome}</TableCell>
-            <TableCell>{candidate.email}</TableCell>
-            <TableCell>{candidate.telefone}</TableCell>
-            <TableCell>{candidate.cargo_desejado}</TableCell>
-            <TableCell>{getStatusBadge(candidate.status)}</TableCell>
-            {canEdit && (
-              <TableCell>
-                <Select
-                  value={candidate.status}
-                  onValueChange={(value) => handleStatusChange(candidate.id, value)}
-                >
-                  <SelectTrigger className="w-[140px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pendente">Pendente</SelectItem>
-                    <SelectItem value="em_analise">Em Análise</SelectItem>
-                    <SelectItem value="aprovado">Aprovado</SelectItem>
-                    <SelectItem value="reprovado">Reprovado</SelectItem>
-                  </SelectContent>
-                </Select>
-              </TableCell>
-            )}
-          </TableRow>
-        ))}
+        {candidates.map((candidate) => {
+          const extras = parseObservacoes(candidate.observacoes);
+          return (
+            <TableRow key={candidate.id}>
+              <TableCell className="font-medium">{candidate.nome}</TableCell>
+              <TableCell>{candidate.email}</TableCell>
+              <TableCell>{candidate.telefone}</TableCell>
+              <TableCell>{extras.cargo_desejado || '-'}</TableCell>
+              <TableCell>{getStatusBadge(candidate.status)}</TableCell>
+              {canEdit && (
+                <TableCell>
+                  <Select
+                    value={candidate.status}
+                    onValueChange={(value) => handleStatusChange(candidate.id, value)}
+                  >
+                    <SelectTrigger className="w-[140px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pendente">Pendente</SelectItem>
+                      <SelectItem value="em_analise">Em Análise</SelectItem>
+                      <SelectItem value="aprovado">Aprovado</SelectItem>
+                      <SelectItem value="reprovado">Reprovado</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </TableCell>
+              )}
+            </TableRow>
+          );
+        })}
       </TableBody>
     </Table>
   );
