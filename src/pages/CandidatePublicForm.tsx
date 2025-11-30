@@ -117,13 +117,9 @@ const CandidatePublicForm = () => {
         return;
       }
 
-      // Inserir candidato
-      const { error } = await (supabase as any).from('candidates').insert({
-        organization_id: org.id,
-        nome: validatedData.nome,
-        idade: validatedData.idade,
-        email: validatedData.email,
-        telefone: validatedData.telefone,
+      // Inserir candidato - usando colunas existentes e observacoes para dados extras
+      const dadosExtras = {
+        idade: parseInt(formData.idade),
         casado: formData.casado === 'sim',
         tem_filhos: formData.tem_filhos === 'sim',
         nasceu_regiao: formData.nasceu_regiao === 'sim',
@@ -141,6 +137,16 @@ const CandidatePublicForm = () => {
         tempo_desempregado: validatedData.tempo_desempregado || null,
         como_soube: validatedData.como_soube,
         cargo_desejado: validatedData.cargo_desejado,
+      };
+
+      const { error } = await (supabase as any).from('candidates').insert({
+        organization_id: org.id,
+        nome: validatedData.nome,
+        email: validatedData.email,
+        telefone: validatedData.telefone,
+        experiencia: formData.experiencia_comercial === 'sim' ? 'Sim' : 'Não',
+        disponibilidade: formData.situacao_emprego,
+        observacoes: JSON.stringify(dadosExtras),
         status: 'pendente',
       });
 
