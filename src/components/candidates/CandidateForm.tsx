@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { UserPlus } from 'lucide-react';
 import { handleError } from '@/lib/errorHandler';
 
@@ -31,15 +31,17 @@ const CandidateForm = ({ onSuccess }: CandidateFormProps) => {
 
     setLoading(true);
     try {
-      // @ts-ignore - Tabela será criada pela migration
+      // Store cargo_desejado in observacoes as JSON since column doesn't exist
+      const observacoes = JSON.stringify({ cargo_desejado: cargoDesejado.trim() });
+      
+      // @ts-ignore - Tabela candidates
       const { error } = await (supabase as any).from('candidates').insert({
         nome: nome.trim(),
         email: email.trim(),
         telefone: telefone.trim(),
-        cargo_desejado: cargoDesejado.trim(),
         experiencia: experiencia.trim() || null,
+        observacoes,
         status: 'pendente',
-        created_by: user.id,
       });
 
       if (error) throw error;
@@ -74,6 +76,7 @@ const CandidateForm = ({ onSuccess }: CandidateFormProps) => {
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Cadastrar Novo Candidato</DialogTitle>
+          <DialogDescription>Preencha os dados do candidato para adicionar ao processo seletivo.</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">

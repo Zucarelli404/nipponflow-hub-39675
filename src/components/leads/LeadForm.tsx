@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Plus } from 'lucide-react';
 import { z } from 'zod';
 
@@ -92,6 +92,7 @@ const LeadForm = ({ onSuccess }: LeadFormProps) => {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Cadastrar Novo Lead</DialogTitle>
+          <DialogDescription>Preencha os dados do novo lead para adicionar ao sistema.</DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
